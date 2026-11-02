@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c4076">
+<title>塞英双语 · 系统学习</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d2330;--muted:#6b7280;--line:#e6e2d8;--blue:#0c4076;--red:#c6363c;
+  --green:#2f8f5b;--amber:#b7790f;--soft:#eef3f9;--fac:#b4561b;--r:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Segoe UI",Roboto,sans-serif}
+body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+header{background:var(--blue);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 16px 10px;position:sticky;top:0;z-index:5;box-shadow:0 3px 0 var(--red)}
+header h1{margin:0;font-size:17px;font-weight:700}
+.toggles{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.pill{border:1px solid rgba(255,255,255,.45);background:transparent;color:#fff;border-radius:999px;padding:4px 11px;font-size:13px;cursor:pointer}
+.pill.on{background:#fff;color:var(--blue);border-color:#fff;font-weight:600}
+main{max-width:720px;margin:0 auto;padding:14px}
+.view{display:none}.view.on{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom);z-index:6}
+nav button{flex:1;border:0;background:none;padding:8px 0 7px;font-size:12px;color:var(--muted);cursor:pointer}
+nav button b{display:block;font-size:20px;line-height:1.2;margin-bottom:1px;font-weight:400}
+nav button.on{color:var(--blue);font-weight:700}
+h2{font-size:16px;margin:4px 2px 10px}
+.lvhead{margin:18px 2px 8px}
+.lvhead .t{font-weight:800;font-size:15px;color:var(--blue)}
+.lvhead .s{font-size:12px;color:var(--muted);margin-top:2px}
+.unit{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:8px;cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit}
+.unit .no{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex:none}
+.unit.done .no{background:var(--green);color:#fff}
+.unit .ic{font-size:22px}
+.unit .mid{flex:1;min-width:0}
+.unit .t{font-weight:700}
+.unit .n{font-size:12px;color:var(--muted);margin-top:2px}
+.bar{height:5px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green)}
+.fachero{background:linear-gradient(135deg,#7a3410,#b4561b);color:#fff;border-radius:18px;padding:16px;margin-bottom:12px}
+.fachero .t{font-size:18px;font-weight:800}.fachero .s{font-size:13px;opacity:.9;margin-top:4px;line-height:1.5}
+.back{border:0;background:none;color:var(--blue);font-size:15px;padding:4px 0 10px;cursor:pointer}
+.tip{background:#fff8e6;border:1px solid #f1dfb0;border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.65;margin-bottom:12px}
+.tip b{color:var(--amber)}
+.sec{font-size:13px;font-weight:800;color:var(--muted);margin:16px 2px 8px;letter-spacing:1px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 10px 11px 14px;margin-bottom:7px;display:flex;gap:8px;align-items:center}
+.item .txt{flex:1;min-width:0}
+.zh{font-size:14px;color:var(--muted)}
+.sr{font-size:18px;font-weight:700;color:var(--blue);margin:2px 0;word-wrap:break-word}
+.en{font-size:14px;color:#4b5563}
+.en::before{content:"EN ";font-size:10px;color:var(--red);font-weight:700}
+.note{font-size:12px;color:var(--amber);margin-top:3px}
+.spk{border:0;background:var(--soft);border-radius:50%;width:36px;height:36px;font-size:15px;cursor:pointer;flex:none}
+.spk.en-s{background:#fbeeee;font-size:12px;font-weight:700;color:var(--red)}
+.lvl{font-size:11px;color:#fff;border-radius:6px;padding:1px 6px;flex:none}
+.search{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;font-size:15px;background:#fff}
+.fc{background:var(--card);border:1px solid var(--line);border-radius:22px;min-height:260px;padding:26px 20px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;cursor:pointer;box-shadow:0 6px 20px rgba(12,64,118,.07)}
+.fc .big{font-size:26px;font-weight:700;color:var(--blue)}
+.fc .hint{font-size:13px;color:var(--muted);margin-top:16px}
+.fc .ans{margin-top:16px;border-top:1px dashed var(--line);padding-top:14px;width:100%}
+.row{display:flex;gap:10px;margin-top:14px}
+.btn{flex:1;border:0;border-radius:14px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:var(--blue)}
+.btn.red{background:var(--red)}.btn.green{background:var(--green)}.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--line)}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:2px 2px 10px}
+select{padding:9px 10px;border-radius:10px;border:1px solid var(--line);font-size:14px;background:#fff;width:100%;color:var(--ink)}
+.opts{display:grid;gap:9px;margin-top:14px}
+.opt{background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px;font-size:16px;text-align:left;cursor:pointer;color:var(--ink)}
+.opt.ok{border-color:var(--green);background:#ecf7f0}.opt.bad{border-color:var(--red);background:#fbeeee}
+.q{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 16px;text-align:center}
+.q .lab{font-size:12px;color:var(--muted)}
+.q .big{font-size:24px;font-weight:700;color:var(--blue);margin-top:6px}
+input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px solid var(--line);margin-top:14px}
+.feedback{margin-top:10px;font-size:15px;min-height:22px;line-height:1.5}
+.abc{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px}
+.L{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer}
+.L .a{font-size:22px;font-weight:700;color:var(--blue)}.L .c{font-size:18px;color:var(--red)}
+.L .p{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.35}
+.box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;font-size:14px;line-height:1.7}
+.box b{color:var(--blue)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 4px;text-align:center}
+.stat .v{font-size:22px;font-weight:800;color:var(--blue)}.stat .k{font-size:11px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#1d2330;color:#fff;padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;pointer-events:none;z-index:9;max-width:90%}
+.toast.on{opacity:.95}
+.tabs2{display:flex;gap:6px;margin-bottom:12px}
+.tabs2 button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px;font-size:14px;cursor:pointer;color:var(--ink)}
+.tabs2 button.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <h1>🇷🇸 塞英双语 · 系统学习</h1>
+  <div class="toggles">
+    <button class="pill" id="tLat" onclick="setScript('lat')">拉丁字母</button>
+    <button class="pill" id="tCyr" onclick="setScript('cyr')">西里尔字母</button>
+    <button class="pill" id="tEn" onclick="toggleEn()">显示英语</button>
+  </div>
+</header>
+
+<main>
+  <section class="view on" id="v-course">
+    <div id="courseHome">
+      <input class="search" id="q" placeholder="🔍 搜索全部词句：中文 / Srpski / English" oninput="doSearch()">
+      <div id="searchRes"></div>
+      <div id="courseList"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-factory">
+    <div id="factoryHome"></div>
+  </section>
+
+  <section class="view" id="v-unit">
+    <button class="back" id="unitBack">‹ 返回</button>
+    <h2 id="uTitle"></h2>
+    <div id="uBody"></div>
+  </section>
+
+  <section class="view" id="v-cards">
+    <h2>闪卡复习</h2>
+    <div class="row" style="margin-top:0;margin-bottom:12px">
+      <select id="fcCat" onchange="fcStart()"></select>
+      <select id="fcDir" onchange="fcStart()">
+        <option value="zh-sr">中文 → 塞语</option>
+        <option value="sr-zh">塞语 → 中文</option>
+        <option value="zh-en">中文 → 英语</option>
+        <option value="en-sr">英语 → 塞语</option>
+      </select>
+    </div>
+    <div class="meta"><span id="fcInfo"></span><span id="fcLeft"></span></div>
+    <div id="fcBox"></div>
+  </section>
+
+  <section class="view" id="v-quiz">
+    <h2>小测验</h2>
+    <div class="row" style="margin-top:0;margin-bottom:12px">
+      <select id="qzCat" onchange="qzStart()"></select>
+      <select id="qzMode" onchange="qzStart()">
+        <option value="zh-sr">选择：中文 → 塞语</option>
+        <option value="sr-zh">选择：塞语 → 中文</option>
+        <option value="zh-en">选择：中文 → 英语</option>
+        <option value="sr-en">选择：塞语 → 英语</option>
+        <option value="listen">听力：听塞语选中文</option>
+        <option value="type">拼写：看中文写塞语</option>
+      </select>
+    </div>
+    <div class="meta"><span id="qzScore"></span><span id="qzNum"></span></div>
+    <div id="qzBox"></div>
+  </section>
+
+  <section class="view" id="v-more">
+    <div class="tabs2"><button class="on" id="m1" onclick="moreTab(1)">📈 进度</button><button id="m2" onclick="moreTab(2)">🔤 字母发音</button><button id="m3" onclick="moreTab(3)">ℹ️ 说明</button></div>
+    <div id="more1">
+      <div class="stats">
+        <div class="stat"><div class="v" id="sTotal">0</div><div class="k">总词句</div></div>
+        <div class="stat"><div class="v" id="sKnown">0</div><div class="k">已掌握</div></div>
+        <div class="stat"><div class="v" id="sLearning">0</div><div class="k">学习中</div></div>
+        <div class="stat"><div class="v" id="sDue">0</div><div class="k">该复习</div></div>
+      </div>
+      <div id="lvStats"></div>
+      <button class="btn ghost" style="width:100%;margin-top:8px" onclick="resetAll()">清除所有学习进度</button>
+    </div>
+    <div id="more2" style="display:none">
+      <div class="box">塞尔维亚语<b>怎么写就怎么读</b>，一个字母只对应一个音。每个字母有拉丁（蓝）和西里尔（红）两种写法，街上两种都会见到。点字母可以听发音。</div>
+      <div class="abc" id="abcGrid"></div>
+      <div class="box" style="margin-top:12px">
+        <b>最容易错的几组</b><br>
+        č / ć：č 像拼音 ch（翘舌、硬），ć 像拼音 q（软）。<br>
+        dž / đ：dž 像拼音 zh 但带声，đ 像拼音 j 但带声、更软。<br>
+        š / ž：š 像 sh，ž 像英语 pleasure 里的 s。<br>
+        c 永远读拼音 c；j 读拼音 y；h 读拼音 h；r 要打舌（大舌音）。<br>
+        p / t / k 不送气，听起来接近拼音 b / d / g。<br>
+        <b>重音</b>：一般不落在最后一个音节，多数词重音在前面。
+      </div>
+    </div>
+    <div id="more3" style="display:none">
+      <div class="box"><b>推荐学习顺序</b><br>
+        1. 先看「字母发音」，把 30 个字母读准。<br>
+        2. 「课程」从第一级第 1 课开始，一天 1 课：先读“要点”，再把词汇、句子每条点 🔊 跟读 3 遍。<br>
+        3. 每课学完点「闪卡学这课」，然后「测这课」，正确率 80% 以上再学下一课。<br>
+        4. 每天打开「闪卡」选“全部”，把到期的卡复习完（不会的词会更早出现，会的词隔 1、3、7、14、30 天再出现）。<br>
+        5. 「工厂」板块和课程同时学：上班前看一课，在工位上就用。
+      </div>
+      <div class="box"><b>离线说明</b><br>
+        所有内容都在应用里，不需要网络。学习进度保存在本机：安装新版本会保留进度；卸载应用或换手机会丢失。<br>
+        <b>发音</b>用的是手机自带的语音。如果点 🔊 没声音：手机设置 → 文字转语音（TTS）→ 下载「塞尔维亚语」或「克罗地亚语」语音包（两者发音几乎一样）。
+      </div>
+      <div id="voiceInfo" class="box"></div>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button class="on" data-v="course"><b>📚</b>课程</button>
+  <button data-v="factory"><b>🏭</b>工厂</button>
+  <button data-v="cards"><b>🃏</b>闪卡</button>
+  <button data-v="quiz"><b>✅</b>测验</button>
+  <button data-v="more"><b>⋯</b>更多</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+/* 每行：中文|塞尔维亚语(拉丁)|English|备注(可选) */
+const LEVELS = [
+ {id:"L1", t:"第一级 · 入门", sub:"打基础：问候、介绍、数字、时间、基本动词"},
+ {id:"L2", t:"第二级 · 生活", sub:"能自己吃饭、购物、租房、坐车、看病"},
+ {id:"L3", t:"第三级 · 进阶", sub:"办事、约人、表达想法、过去和将来"},
+ {id:"F",  t:"工厂实用", sub:"上班、生产线、质量、安全、请假工资"},
+];
+const UNITS = [
+/* ================= 第一级 ================= */
+{id:"greet",lv:"L1",ic:"👋",t:"问候与礼貌",tip:"对陌生人、上级、长辈用“您”（Vi），对朋友、同事用“你”（ti）。Dobar dan 白天任何时候都能用，最安全。",d:`
+你好|Zdravo|Hello
+嗨／拜拜（熟人）|Ćao|Hi / Bye|朋友、同事之间用
+早上好|Dobro jutro|Good morning
+你好（白天，正式）|Dobar dan|Good day|最常用的礼貌问候
+晚上好|Dobro veče|Good evening
+晚安|Laku noć|Good night
+再见|Doviđenja|Goodbye
+回头见|Vidimo se|See you
+明天见|Vidimo se sutra|See you tomorrow
+谢谢|Hvala|Thank you
+非常感谢|Hvala puno|Thanks a lot
+谢谢您|Hvala vam|Thank you (formal)
+不客气|Nema na čemu|You're welcome
+请；不客气；什么？|Molim|Please / You're welcome / Pardon?|一词多用：没听清时说 Molim?
+请（对您）|Molim vas|Please (formal)
+请（对你）|Molim te|Please (informal)
+对不起／打扰一下（对您）|Izvinite|Excuse me / Sorry (formal)
+对不起（对你）|Izvini|Sorry (informal)
+没关系|Nema veze|Never mind
+没问题|Nema problema|No problem
+是|Da|Yes
+不是|Ne|No
+好的|U redu|OK
+行／好|Dobro|Good / OK
+可以／行|Može|OK / It's possible|塞尔维亚人非常常用
+好，说定了|Važi|Deal / OK|非常口语
+当然|Naravno|Of course
+也许|Možda|Maybe
+欢迎|Dobro došli|Welcome
+祝你好运|Srećno|Good luck
+祝您愉快／慢用|Prijatno|Have a nice day / Enjoy your meal|告别和吃饭时都说
+干杯|Živeli|Cheers
+生日快乐|Srećan rođendan|Happy birthday
+新年快乐|Srećna Nova godina|Happy New Year
+你好吗？|Kako si?|How are you? (informal)
+您好吗？|Kako ste?|How are you? (formal)
+我很好，谢谢|Dobro sam, hvala|I'm fine, thanks
+还行|Onako|So-so
+你呢？|A ti?|And you?
+您呢？|A vi?|And you? (formal)
+最近怎么样？|Šta ima?|What's up?
+没什么新鲜事|Ništa novo|Nothing new`},
+
+{id:"intro",lv:"L1",ic:"🙋",t:"自我介绍",tip:"动词 biti（是）：ja sam 我是 · ti si 你是 · on/ona je 他/她是 · mi smo 我们是 · vi ste 你们/您是 · oni su 他们是。主语常省略，但 sam/si/je 不能放句首：说 Umoran sam，不说 Sam umoran。",d:`
+我|ja|I
+你|ti|you (informal)
+他|on|he
+她|ona|she
+我们|mi|we
+你们／您|vi|you (plural / formal)
+他们|oni|they
+我是……|Ja sam ...|I am ...
+你叫什么名字？|Kako se zoveš?|What's your name? (informal)
+您叫什么名字？|Kako se zovete?|What's your name? (formal)
+我叫……|Zovem se ...|My name is ...
+很高兴认识您|Drago mi je|Nice to meet you
+你是哪里人？|Odakle si?|Where are you from?
+您是哪里人？|Odakle ste?|Where are you from? (formal)
+我来自中国|Ja sam iz Kine|I'm from China
+我是中国人（男）|Ja sam Kinez|I'm Chinese (m)
+我是中国人（女）|Ja sam Kineskinja|I'm Chinese (f)
+我住在沙巴茨|Živim u Šapcu|I live in Šabac|地名变格：Šabac → u Šapcu
+我住在塞尔维亚|Živim u Srbiji|I live in Serbia
+我在这里工作|Radim ovde|I work here
+我在工厂工作|Radim u fabrici|I work in a factory
+你多大了？|Koliko imaš godina?|How old are you?
+我三十岁|Imam trideset godina|I'm thirty years old
+我结婚了（男）|Oženjen sam|I'm married (m)
+我结婚了（女）|Udata sam|I'm married (f)
+我没结婚|Nisam u braku|I'm not married
+我有孩子|Imam decu|I have children
+我在学塞尔维亚语|Učim srpski|I'm learning Serbian
+我来塞尔维亚两个月了|U Srbiji sam dva meseca|I've been in Serbia for two months
+我的电话号码是……|Moj broj telefona je ...|My phone number is ...
+中国|Kina|China
+塞尔维亚|Srbija|Serbia
+中文|kineski|Chinese (language)
+塞尔维亚语|srpski|Serbian (language)
+英语|engleski|English (language)
+名字|ime|first name
+姓|prezime|surname
+地址|adresa|address
+国籍|državljanstvo|citizenship
+年龄|godine|age`},
+
+{id:"talk",lv:"L1",ic:"💬",t:"沟通救命句",tip:"听不懂时先说 Izvinite（不好意思），再用下面的句子。Da li ...? 放在句首就变成一般疑问句：Da li razumete? 您明白吗？",d:`
+我听不懂|Ne razumem|I don't understand
+我明白了|Razumem|I understand
+您明白吗？|Da li razumete?|Do you understand?
+我不会说塞尔维亚语|Ne govorim srpski|I don't speak Serbian
+我会说一点塞尔维亚语|Govorim malo srpski|I speak a little Serbian
+您会说英语吗？|Govorite li engleski?|Do you speak English?
+请说慢一点|Polako, molim vas|Slowly, please
+请再说一遍|Ponovite, molim vas|Please repeat
+您能再说一遍吗？|Možete li da ponovite?|Can you repeat that?
+我没听见|Ne čujem|I can't hear
+这是什么？|Šta je ovo?|What is this?
+……是什么意思？|Šta znači ...?|What does ... mean?
+……用塞尔维亚语怎么说？|Kako se kaže ... na srpskom?|How do you say ... in Serbian?
+怎么拼写？|Kako se piše?|How do you spell it?
+请写下来|Napišite, molim vas|Please write it down
+您能给我看看吗？|Možete li da mi pokažete?|Can you show me?
+我不知道|Ne znam|I don't know
+我不确定（男）|Nisam siguran|I'm not sure (m)
+我不确定（女）|Nisam sigurna|I'm not sure (f)
+我觉得……|Mislim da ...|I think that ...
+对，没错|Tačno|Exactly / Correct
+不对|Nije tačno|That's not right
+您能帮我吗？|Možete li da mi pomognete?|Can you help me?
+……在哪里？|Gde je ...?|Where is ...?
+厕所在哪里？|Gde je toalet?|Where is the toilet?
+我需要……|Treba mi ...|I need ...
+等一下|Samo malo|Just a moment
+不行|Ne može|It's not possible`},
+
+{id:"num",lv:"L1",ic:"🔢",t:"数字",tip:"1 和 2 跟着名词性别变：jedan/jedna/jedno，dva/dve。2、3、4 后面的名词用单数属格（dva komada），5 以上用复数属格（pet komada）。",d:`
+0|nula|zero
+1|jedan|one|阴性 jedna，中性 jedno
+2|dva|two|阴性 dve
+3|tri|three
+4|četiri|four
+5|pet|five
+6|šest|six
+7|sedam|seven
+8|osam|eight
+9|devet|nine
+10|deset|ten
+11|jedanaest|eleven
+12|dvanaest|twelve
+13|trinaest|thirteen
+14|četrnaest|fourteen
+15|petnaest|fifteen
+16|šesnaest|sixteen
+17|sedamnaest|seventeen
+18|osamnaest|eighteen
+19|devetnaest|nineteen
+20|dvadeset|twenty
+21|dvadeset jedan|twenty-one
+25|dvadeset pet|twenty-five
+30|trideset|thirty
+40|četrdeset|forty
+50|pedeset|fifty
+60|šezdeset|sixty
+70|sedamdeset|seventy
+80|osamdeset|eighty
+90|devedeset|ninety
+100|sto|one hundred
+200|dvesta|two hundred
+300|trista|three hundred
+400|četiristo|four hundred
+500|petsto|five hundred
+600|šeststo|six hundred
+700|sedamsto|seven hundred
+800|osamsto|eight hundred
+900|devetsto|nine hundred
+1000|hiljadu|one thousand|名词形式 hiljada
+2000|dve hiljade|two thousand
+5000|pet hiljada|five thousand
+1000000|milion|one million
+第一|prvi|first
+第二|drugi|second
+第三|treći|third
+第四|četvrti|fourth
+第五|peti|fifth
+第十|deseti|tenth
+一半|pola|half
+四分之一|četvrtina|quarter
+百分之……|procenat|percent
+第一次|prvi put|the first time
+两次|dva puta|twice`},
+
+{id:"time",lv:"L1",ic:"🕐",t:"时间与日期",tip:"问几点：Koliko je sati? 半点用 pola，而且是“下一个整点的一半”：pola devet = 8:30。星期和月份都小写。",d:`
+几点了？|Koliko je sati?|What time is it?
+现在三点|Sada je tri sata|It's three o'clock
+现在八点|Sada je osam sati|It's eight o'clock
+八点半|Pola devet|Half past eight|字面是“九点的一半”
+九点一刻|Devet i petnaest|Quarter past nine
+差一刻九点|Petnaest do devet|Quarter to nine
+几点？（什么时间）|U koliko sati?|At what time?
+八点|U osam|At eight
+今天星期几？|Koji je danas dan?|What day is it today?
+今天星期一|Danas je ponedeljak|Today is Monday
+今天几号？|Koji je danas datum?|What's the date today?
+今天|danas|today
+明天|sutra|tomorrow
+昨天|juče|yesterday
+后天|prekosutra|the day after tomorrow
+前天|prekjuče|the day before yesterday
+现在|sada|now
+以后／待会儿|kasnije|later
+早（时间早）|rano|early
+晚（时间晚）|kasno|late
+总是|uvek|always
+从不|nikad|never
+经常|često|often
+有时|ponekad|sometimes
+早上|jutro|morning
+上午|prepodne|before noon
+中午|podne|noon
+下午|popodne|afternoon
+晚上|veče|evening
+夜里|noć|night
+午夜|ponoć|midnight
+小时；钟表|sat|hour; clock
+分钟|minut|minute
+秒|sekund|second
+天|dan|day
+星期（周）|nedelja|week|也指星期日
+月|mesec|month
+年|godina|year
+周末|vikend|weekend
+星期一|ponedeljak|Monday
+星期二|utorak|Tuesday
+星期三|sreda|Wednesday
+星期四|četvrtak|Thursday
+星期五|petak|Friday
+星期六|subota|Saturday
+星期日|nedelja|Sunday
+一月|januar|January
+二月|februar|February
+三月|mart|March
+四月|april|April
+五月|maj|May
+六月|jun|June
+七月|jul|July
+八月|avgust|August
+九月|septembar|September
+十月|oktobar|October
+十一月|novembar|November
+十二月|decembar|December`},
+
+{id:"family",lv:"L1",ic:"👨‍👩‍👧",t:"家人与朋友",tip:"moj（我的）跟着名词性别变：moj brat 我的兄弟 · moja sestra 我的姐妹 · moje dete 我的孩子。",d:`
+家庭|porodica|family
+父亲|otac|father
+爸爸|tata|dad
+母亲|majka|mother
+妈妈|mama|mom
+父母|roditelji|parents
+儿子|sin|son
+女儿|ćerka|daughter
+孩子|dete|child
+孩子们|deca|children
+兄弟|brat|brother
+姐妹|sestra|sister
+丈夫|muž|husband
+妻子；女人|žena|wife; woman
+爷爷／外公|deda|grandfather
+奶奶／外婆|baka|grandmother
+孙子|unuk|grandson
+舅舅|ujak|uncle (mother's brother)
+叔叔|stric|uncle (father's brother)
+姑姑／姨|tetka|aunt
+表亲／亲戚|rođak|cousin / relative
+朋友（男）|prijatelj|friend (m)
+朋友（女）|prijateljica|friend (f)
+邻居|komšija|neighbor
+女朋友；姑娘|devojka|girlfriend; girl
+男朋友；小伙子|dečko|boyfriend; boy
+男人|muškarac|man
+这是我儿子|Ovo je moj sin|This is my son
+这是我妻子|Ovo je moja žena|This is my wife
+我有一个兄弟和一个姐妹|Imam brata i sestru|I have a brother and a sister
+我的家人在中国|Moja porodica je u Kini|My family is in China
+你有孩子吗？|Imaš li dece?|Do you have children?
+我想念家人|Nedostaje mi porodica|I miss my family`},
+
+{id:"adj",lv:"L1",ic:"🎨",t:"形容词与颜色",tip:"形容词跟名词性别变：阳性多为辅音结尾（dobar），阴性 -a（dobra），中性 -o（dobro）。例：dobar dan · dobra kafa · dobro jutro。",d:`
+好的|dobar|good
+坏的|loš|bad
+大的|veliki|big
+小的|mali|small
+新的|nov|new
+旧的；老的|star|old
+年轻的|mlad|young
+漂亮的|lep|beautiful
+丑的|ružan|ugly
+贵的|skup|expensive
+便宜的|jeftin|cheap
+快的|brz|fast
+慢的|spor|slow
+容易的；轻的|lak|easy; light
+难的；重的|težak|difficult; heavy
+高的|visok|tall / high
+矮的；低的|nizak|short / low
+长的|dug|long
+短的|kratak|short
+宽的|širok|wide
+窄的|uzak|narrow
+满的|pun|full
+空的|prazan|empty
+干净的|čist|clean
+脏的|prljav|dirty
+热的|vruć|hot
+冷的|hladan|cold
+温暖的|topao|warm
+开着的|otvoren|open
+关着的|zatvoren|closed
+正确的；准确的|tačan|correct
+重要的|važan|important
+忙的|zauzet|busy
+空闲的；自由的|slobodan|free
+累的|umoran|tired
+饿的|gladan|hungry
+渴的|žedan|thirsty
+高兴的|srećan|happy
+难过的|tužan|sad
+生病的|bolestan|ill
+健康的|zdrav|healthy
+颜色|boja|color
+红色的|crven|red
+蓝色的|plav|blue
+绿色的|zelen|green
+黄色的|žut|yellow
+黑色的|crn|black
+白色的|beo|white|阴性 bela
+灰色的|siv|grey
+棕色的|braon|brown
+橙色的|narandžast|orange
+粉色的|roze|pink
+紫色的|ljubičast|purple
+浅色的|svetao|light (color)
+深色的|taman|dark (color)`},
+
+{id:"verbs",lv:"L1",ic:"🏃",t:"常用动词",tip:"词典里的动词以 -ti/-ći 结尾。现在时按人称变：raditi（工作）→ radim 我 · radiš 你 · radi 他/她 · radimo 我们 · radite 你们 · rade 他们。每个词的备注是“我……”的形式。",d:`
+是|biti|to be|我是：sam
+有|imati|to have|我有：imam
+工作；做|raditi|to work; to do|我做：radim
+想要|hteti|to want|我想：hoću
+能；可以|moći|can|我能：mogu
+必须|morati|must|我必须：moram
+知道；会|znati|to know|我知道：znam
+理解|razumeti|to understand|我理解：razumem
+说话|govoriti|to speak|我说：govorim
+学习|učiti|to learn|我学：učim
+去|ići|to go|我去：idem
+来|doći|to come|我来：dođem
+看见|videti|to see|我看见：vidim
+看|gledati|to watch|我看：gledam
+听|slušati|to listen|我听：slušam
+读|čitati|to read|我读：čitam
+写|pisati|to write|我写：pišem
+吃|jesti|to eat|我吃：jedem
+喝|piti|to drink|我喝：pijem
+睡觉|spavati|to sleep|我睡：spavam
+买|kupiti|to buy|我买：kupim
+付钱|platiti|to pay|我付：platim
+给|dati|to give|我给：dam
+拿|uzeti|to take|我拿：uzmem
+等|čekati|to wait|我等：čekam
+找|tražiti|to look for|我找：tražim
+帮助|pomoći|to help|我帮：pomognem
+打开|otvoriti|to open|我打开：otvorim
+关上|zatvoriti|to close|我关：zatvorim
+开始|početi|to begin|我开始：počnem
+结束；完成|završiti|to finish|我完成：završim
+爱；喜欢|voleti|to love; to like|我爱：volim
+住；生活|živeti|to live|我住：živim
+想；认为|misliti|to think|我想：mislim
+说；告诉|reći|to say|我说：kažem
+问|pitati|to ask|我问：pitam
+放|staviti|to put|我放：stavim
+拿着；穿着|nositi|to carry; to wear|我拿：nosim
+带来|doneti|to bring|我带来：donesem
+坐着|sedeti|to sit|我坐：sedim
+站着|stajati|to stand|我站：stojim
+停下|stati|to stop|我停：stanem
+迟到|kasniti|to be late|我迟到：kasnim
+叫；打电话|zvati|to call|我叫：zovem
+你在做什么？|Šta radiš?|What are you doing?
+我想……|Hoću da ...|I want to ...
+我不能|Ne mogu|I can't
+我可以……吗？|Mogu li ...?|Can I ...?
+我得走了|Moram da idem|I have to go
+我喜欢……|Volim ...|I like ...`},
+
+{id:"q",lv:"L1",ic:"❓",t:"疑问词",tip:"疑问词放句首：Gde radiš? 你在哪工作？一般疑问句用 Da li ... 开头，或把动词提前加 li：Imate li ...? 您有……吗？",d:`
+谁|ko|who
+什么|šta|what
+哪里|gde|where
+什么时候|kada|when
+为什么|zašto|why
+怎么|kako|how
+多少|koliko|how much / how many
+哪个|koji|which
+谁的|čiji|whose
+从哪里|odakle|where from
+去哪里|kuda|where to
+那是谁？|Ko je to?|Who is that?
+你在哪儿？|Gde si?|Where are you?
+什么时候开始？|Kada počinje?|When does it start?
+为什么？|Zašto?|Why?
+多少钱？|Koliko košta?|How much does it cost?
+哪路公交车？|Koji autobus?|Which bus?
+这是谁的？|Čiji je ovo?|Whose is this?
+您有……吗？|Da li imate ...?|Do you have ...?
+你去哪儿？|Kuda ideš?|Where are you going?
+怎么样？|Kako je?|How is it?`},
+
+/* ================= 第二级 ================= */
+{id:"rest",lv:"L2",ic:"🍽️",t:"餐厅点餐",tip:"“我想要……”男性说 Želeo bih，女性说 Želela bih。点东西直接说“东西 + molim”最简单：Kafu, molim。",d:`
+请给我菜单|Jelovnik, molim|The menu, please
+两个人的桌子|Sto za dvoje, molim|A table for two, please
+这个位置有人吗？|Da li je ovo mesto slobodno?|Is this seat free?
+您推荐什么？|Šta preporučujete?|What do you recommend?
+我想要……（男）|Želeo bih ...|I would like ... (m)
+我想要……（女）|Želela bih ...|I would like ... (f)
+我要这个|Hoću ovo|I want this
+请来一杯咖啡|Jednu kafu, molim|One coffee, please
+请来水|Vodu, molim|Water, please
+再来一杯啤酒|Još jedno pivo, molim|Another beer, please
+买单|Račun, molim|The bill, please
+一起付还是分开付？|Zajedno ili odvojeno?|Together or separately?
+可以刷卡吗？|Može kartica?|Can I pay by card?
+不用找了|Zadržite kusur|Keep the change
+打包带走|Za poneti|To take away
+很好吃|Ukusno je|It's delicious
+不要洋葱|Bez luka|Without onion
+不要肉|Bez mesa|Without meat
+这是什么肉？|Koje je ovo meso?|What meat is this?
+桌子|sto|table
+服务员（男）|konobar|waiter
+服务员（女）|konobarica|waitress
+早餐|doručak|breakfast
+午餐|ručak|lunch
+晚餐|večera|dinner
+前菜|predjelo|starter
+主菜|glavno jelo|main course
+甜点|dezert|dessert
+勺子|kašika|spoon
+叉子|viljuška|fork
+刀|nož|knife
+盘子|tanjir|plate
+玻璃杯|čaša|glass
+杯子（咖啡杯）|šolja|cup
+餐巾纸|salveta|napkin
+辣的|ljuto|spicy
+咸的|slano|salty
+甜的|slatko|sweet
+酸的|kiselo|sour
+苦的|gorko|bitter
+烤肉卷|ćevapi|grilled minced meat rolls|塞尔维亚名菜
+塞式汉堡肉饼|pljeskavica|Serbian burger patty
+千层酥饼|burek|burek (pastry)
+卷心菜肉卷|sarma|cabbage rolls
+奶酪千层饼|gibanica|cheese pie
+浓汤|čorba|thick soup
+红椒酱|ajvar|red pepper relish
+奶油酱|kajmak|clotted cream spread
+烧烤|roštilj|barbecue
+炖豆子|pasulj|bean stew`},
+
+{id:"market",lv:"L2",ic:"🛒",t:"食物与超市",tip:"称重说法：kilo 一公斤，pola kile 半公斤，deset deka = 100 克（1 deka = 10 克，很常用）。",d:`
+面包|hleb|bread
+肉|meso|meat
+鸡肉|piletina|chicken
+猪肉|svinjetina|pork
+牛肉|govedina|beef
+小牛肉|junetina|veal / young beef
+肉馅|mleveno meso|minced meat
+鱼|riba|fish
+鸡蛋|jaje|egg|复数 jaja
+牛奶|mleko|milk
+酸奶|jogurt|yogurt
+奶酪|sir|cheese
+黄油|puter|butter
+油|ulje|oil
+盐|so|salt
+糖|šećer|sugar
+胡椒|biber|pepper
+面粉|brašno|flour
+米|pirinač|rice
+面条／意面|testenina|pasta
+土豆|krompir|potato
+西红柿|paradajz|tomato
+黄瓜|krastavac|cucumber
+洋葱|luk|onion
+大蒜|beli luk|garlic
+甜椒|paprika|bell pepper
+卷心菜|kupus|cabbage
+胡萝卜|šargarepa|carrot
+苹果|jabuka|apple
+香蕉|banana|banana
+橙子|pomorandža|orange
+柠檬|limun|lemon
+葡萄|grožđe|grapes
+西瓜|lubenica|watermelon
+水果|voće|fruit
+蔬菜|povrće|vegetables
+水|voda|water
+气泡水|kisela voda|sparkling water
+果汁|sok|juice
+咖啡|kafa|coffee
+茶|čaj|tea
+啤酒|pivo|beer
+葡萄酒|vino|wine
+果酒（白酒）|rakija|fruit brandy
+袋子|kesa|bag
+篮子|korpa|basket
+购物车|kolica|shopping cart
+收银台|kasa|checkout
+一件／一个|komad|piece
+包装|pakovanje|package
+瓶|flaša|bottle
+罐头|konzerva|can
+保质期|rok trajanja|expiry date
+请给我半公斤|Pola kile, molim|Half a kilo, please
+一公斤苹果|Kilo jabuka|A kilo of apples
+请给我一百克|Deset deka, molim|100 grams, please
+您有……吗？|Imate li ...?|Do you have ...?
+要袋子吗？|Treba li vam kesa?|Do you need a bag?|收银员常问
+……在哪里？|Gde se nalazi ...?|Where can I find ...?`},
+
+{id:"shop",lv:"L2",ic:"💳",t:"购物与钱",tip:"口语里“钱”常说 pare。akcija 是促销，看到 AKCIJA 标签就是打折。",d:`
+多少钱？|Koliko košta?|How much is it?
+一共多少钱？|Koliko je to ukupno?|How much is it in total?
+太贵了|Previše je skupo|It's too expensive
+有便宜一点的吗？|Imate li nešto jeftinije?|Do you have something cheaper?
+我可以试一下吗？|Mogu li da probam?|Can I try it on?
+有大一号的吗？|Imate li veći broj?|Do you have a bigger size?
+有小一号的吗？|Imate li manji broj?|Do you have a smaller size?
+我就要这个|Uzeću ovo|I'll take this
+我只是看看|Samo gledam|I'm just looking
+可以刷卡吗？|Mogu li da platim karticom?|Can I pay by card?
+我付现金|Platiću gotovinom|I'll pay in cash
+我可以退这个吗？|Mogu li da vratim ovo?|Can I return this?
+最近的取款机在哪？|Gde je najbliži bankomat?|Where is the nearest ATM?
+钱|novac|money
+钱（口语）|pare|money (colloquial)
+现金|gotovina|cash
+卡|kartica|card
+找零|kusur|change
+收据；账单|račun|receipt; bill
+价格|cena|price
+折扣|popust|discount
+促销|akcija|sale / promotion
+第纳尔|dinar|dinar
+欧元|evro|euro
+换汇处|menjačnica|exchange office
+取款机|bankomat|ATM
+营业时间|radno vreme|opening hours
+营业中|otvoreno|open
+关门|zatvoreno|closed
+商店|prodavnica|shop
+农贸市场|pijaca|farmers' market
+商场|tržni centar|shopping mall
+药店|apoteka|pharmacy
+面包店|pekara|bakery
+肉店|mesara|butcher's
+报亭|trafika|kiosk`},
+
+{id:"home",lv:"L2",ic:"🏠",t:"住房与租房",tip:"režije 指水、电、暖气、垃圾等杂费。看房时一定问 Da li su režije uključene?（杂费含不含）。",d:`
+我在找出租的公寓|Tražim stan za iznajmljivanje|I'm looking for an apartment to rent
+这套房还空着吗？|Da li je stan slobodan?|Is the apartment available?
+房租多少？|Kolika je kirija?|How much is the rent?
+杂费包含吗？|Da li su režije uključene?|Are utilities included?
+我可以看房吗？|Mogu li da pogledam stan?|Can I see the apartment?
+什么时候能搬进来？|Kada mogu da se uselim?|When can I move in?
+押金多少？|Koliki je depozit?|How much is the deposit?
+热水器坏了|Bojler ne radi|The water heater doesn't work
+没有热水|Nema tople vode|There's no hot water
+停电了|Nestalo je struje|The power is out
+漏水了|Curi voda|Water is leaking
+我得交电费|Treba da platim račun za struju|I need to pay the electricity bill
+垃圾扔哪里？|Gde se baca smeće?|Where do I throw the trash?
+公寓|stan|apartment
+房子|kuća|house
+房间|soba|room
+厨房|kuhinja|kitchen
+卫生间|kupatilo|bathroom
+卧室|spavaća soba|bedroom
+客厅|dnevna soba|living room
+阳台|terasa|balcony / terrace
+窗户|prozor|window
+门|vrata|door
+钥匙|ključ|key
+楼层|sprat|floor
+一楼（地面层）|prizemlje|ground floor
+电梯|lift|elevator
+楼梯|stepenice|stairs
+床|krevet|bed
+桌子|sto|table
+椅子|stolica|chair
+衣柜|ormar|wardrobe
+冰箱|frižider|fridge
+灶台|šporet|stove
+洗衣机|veš-mašina|washing machine
+热水器|bojler|water heater
+暖气|grejanje|heating
+空调|klima|air conditioner
+电|struja|electricity
+网络|internet|internet
+房租|kirija|rent
+押金|depozit|deposit
+合同|ugovor|contract
+房东|stanodavac|landlord
+杂费（水电暖等）|režije|utilities
+带家具的|namešten|furnished
+垃圾|smeće|trash`},
+
+{id:"go",lv:"L2",ic:"🚌",t:"交通与问路",tip:"问路万能句：Kako da stignem do ...?（怎么去……？）。“在……”多用 u 或 na：u gradu 在城里，na stanici 在车站。",d:`
+汽车站在哪里？|Gde je autobuska stanica?|Where is the bus station?
+怎么去……？|Kako da stignem do ...?|How do I get to ...?
+远吗？|Da li je daleko?|Is it far?
+走路要多久？|Koliko treba peške?|How long on foot?
+一张去贝尔格莱德的票|Jednu kartu za Beograd, molim|One ticket to Belgrade, please
+下一班车几点走？|Kada polazi sledeći autobus?|When does the next bus leave?
+从几号站台？|Sa kog perona?|From which platform?
+这车去……吗？|Da li ovaj autobus ide do ...?|Does this bus go to ...?
+请在这里停|Stanite ovde, molim|Stop here, please
+请送我到这个地址|Vozite me na ovu adresu|Take me to this address
+我迷路了（男）|Izgubio sam se|I'm lost (m)
+我迷路了（女）|Izgubila sam se|I'm lost (f)
+公交车|autobus|bus
+火车|voz|train
+出租车|taksi|taxi
+汽车|auto|car
+自行车|bicikl|bicycle
+车站|stanica|station / stop
+汽车站|autobuska stanica|bus station
+火车站|železnička stanica|train station
+机场|aerodrom|airport
+票|karta|ticket
+往返票|povratna karta|return ticket
+站台|peron|platform
+出发|polazak|departure
+到达|dolazak|arrival
+司机|vozač|driver
+左|levo|left
+右|desno|right
+直走|pravo|straight
+往回|nazad|back
+近|blizu|near
+远|daleko|far
+这里|ovde|here
+那里|tamo|there
+拐角|ugao|corner
+路口|raskrsnica|intersection
+红绿灯|semafor|traffic light
+桥|most|bridge
+街道|ulica|street
+广场|trg|square
+市中心|centar grada|city center`},
+
+{id:"health",lv:"L2",ic:"🏥",t:"身体与看病",tip:"“我……疼”说 Boli me + 部位：Boli me glava 我头疼。看普通病去 Dom zdravlja（社区医疗中心）。",d:`
+我头疼|Boli me glava|I have a headache
+我牙疼|Boli me zub|I have a toothache
+我肚子疼|Boli me stomak|I have a stomachache
+我背疼|Bole me leđa|My back hurts
+我发烧了|Imam temperaturu|I have a fever
+我咳嗽|Kašljem|I'm coughing
+我感冒了（男）|Prehlađen sam|I have a cold (m)
+我感冒了（女）|Prehlađena sam|I have a cold (f)
+我恶心|Muka mi je|I feel sick
+我手受伤了（男）|Povredio sam ruku|I hurt my hand (m)
+我需要医生|Treba mi lekar|I need a doctor
+请叫救护车|Pozovite hitnu pomoć|Call an ambulance|急救 194，通用 112
+我对……过敏（男）|Alergičan sam na ...|I'm allergic to ... (m)
+一天几次？|Koliko puta dnevno?|How many times a day?
+一天两次，饭后|Dva puta dnevno posle jela|Twice a day after meals
+我想预约|Želim da zakažem termin|I'd like to make an appointment
+头|glava|head
+眼睛|oko|eye|复数 oči
+耳朵|uho|ear
+鼻子|nos|nose
+嘴|usta|mouth
+牙齿|zub|tooth
+喉咙|grlo|throat
+脖子|vrat|neck
+手；手臂|ruka|hand; arm
+手指|prst|finger
+背|leđa|back
+肚子|stomak|stomach
+腿；脚|noga|leg; foot
+膝盖|koleno|knee
+心脏|srce|heart
+医生|lekar|doctor
+医院|bolnica|hospital
+社区医疗中心|Dom zdravlja|health center
+急救|hitna pomoć|emergency service
+药|lek|medicine
+处方|recept|prescription
+药片|tableta|pill
+预约|termin|appointment
+医保本|zdravstvena knjižica|health insurance card`},
+
+{id:"weather",lv:"L2",ic:"⛅",t:"天气与季节",tip:"vreme 既是“天气”也是“时间”。天气句子常用 je：Hladno je 天冷。",d:`
+天气怎么样？|Kakvo je vreme?|What's the weather like?
+天暖和|Toplo je|It's warm
+天冷|Hladno je|It's cold
+很热|Vruće je|It's hot
+下雨|Pada kiša|It's raining
+下雪|Pada sneg|It's snowing
+刮风|Duva vetar|It's windy
+晴天|Sunčano je|It's sunny
+阴天|Oblačno je|It's cloudy
+今天十度|Danas je deset stepeni|It's ten degrees today
+我冷|Hladno mi je|I'm cold
+我热|Toplo mi je|I'm warm
+天气；时间|vreme|weather; time
+雨|kiša|rain
+雪|sneg|snow
+风|vetar|wind
+太阳|sunce|sun
+雾|magla|fog
+冰|led|ice
+度|stepen|degree
+春天|proleće|spring
+夏天|leto|summer
+秋天|jesen|autumn
+冬天|zima|winter
+雨伞|kišobran|umbrella`},
+
+{id:"clothes",lv:"L2",ic:"👕",t:"衣服",tip:"鞋的尺码叫 broj，衣服尺码叫 veličina。",d:`
+衣服|odeća|clothes
+夹克|jakna|jacket
+大衣|kaput|coat
+T恤|majica|T-shirt
+衬衫|košulja|shirt
+裤子|pantalone|trousers
+牛仔裤|farmerke|jeans
+裙子|suknja|skirt
+连衣裙|haljina|dress
+毛衣|džemper|sweater
+袜子|čarape|socks
+鞋|cipele|shoes
+运动鞋|patike|sneakers
+靴子|čizme|boots
+帽子|kapa|cap / hat
+围巾|šal|scarf
+手套|rukavice|gloves
+尺码|veličina|size
+鞋码|broj|shoe size
+我可以试穿吗？|Mogu li da probam?|Can I try it on?
+这个我穿大了|Ovo mi je veliko|This is too big for me
+这个我穿小了|Ovo mi je malo|This is too small for me
+我穿42码的鞋|Nosim broj četrdeset dva|I wear size 42`},
+
+/* ================= 第三级 ================= */
+{id:"office",lv:"L3",ic:"🏛️",t:"办事：银行、邮局、警察局",tip:"塞尔维亚办事要排队，进门先问 Ko je poslednji?（谁是最后一个？），排在他后面。",d:`
+谁是最后一个？（排队）|Ko je poslednji?|Who is last in line?
+我想开个账户|Želim da otvorim račun|I'd like to open an account
+需要什么材料？|Koji dokumenti su potrebni?|Which documents are needed?
+我要在哪里签字？|Gde treba da potpišem?|Where do I need to sign?
+我需要翻译|Treba mi prevodilac|I need an interpreter
+我想寄包裹|Želim da pošaljem paket|I'd like to send a parcel
+我想取钱|Želim da podignem novac|I'd like to withdraw money
+我想存钱|Želim da uplatim novac|I'd like to deposit money
+我什么时候再来？|Kada da dođem ponovo?|When should I come again?
+银行|banka|bank
+银行账户|račun u banci|bank account
+银行卡|platna kartica|bank card
+邮局|pošta|post office
+包裹|paket|parcel
+信|pismo|letter
+警察局|policijska stanica|police station
+居留|boravak|residence
+居留许可|dozvola za boravak|residence permit
+工作许可|radna dozvola|work permit
+护照|pasoš|passport
+住址登记|prijava boravišta|address registration|外国人常说 bela karta（白卡）
+表格|obrazac|form
+签名|potpis|signature
+窗口|šalter|counter
+队伍|red|queue
+号码|broj|number
+复印件|kopija|copy
+照片|fotografija|photo`},
+
+{id:"phone",lv:"L3",ic:"📱",t:"打电话与约时间",tip:"接电话说 Halo。约人：Kada ti odgovara?（你什么时候方便？）；回答 Može u ...（……可以）。",d:`
+喂？|Halo?|Hello? (phone)
+哪位？|Ko je to?|Who is this?
+我是……|Ovde ...|This is ...
+您能晚点给我打电话吗？|Možete li da me pozovete kasnije?|Can you call me later?
+我给您发短信|Poslaću vam poruku|I'll send you a message
+我听不清|Ne čujem dobro|I can't hear well
+你有空吗？|Imaš li vremena?|Do you have time?
+我们见个面吧|Hajde da se vidimo|Let's meet
+你什么时候方便？|Kada ti odgovara?|When suits you?
+星期六可以吗？|Može u subotu?|Is Saturday OK?
+五点见|Vidimo se u pet|See you at five
+我会迟到十分钟|Kasnim deset minuta|I'm ten minutes late
+抱歉我迟到了|Izvini što kasnim|Sorry I'm late
+我今天不行|Ne mogu danas|I can't today
+电话|telefon|telephone
+手机|mobilni|mobile phone
+短信；消息|poruka|message
+电话（通话）|poziv|call
+约会；会议|sastanak|meeting
+预约时间|termin|appointment`},
+
+{id:"feel",lv:"L3",ic:"💭",t:"感受与意见",tip:"“我喜欢某东西”最自然的是 Sviđa mi se ...（字面是“……让我喜欢”）。“我冷/热”用 mi：Hladno mi je。",d:`
+我喜欢（这个）|Sviđa mi se|I like it
+我不喜欢|Ne sviđa mi se|I don't like it
+我觉得不错|Mislim da je dobro|I think it's good
+我同意|Slažem se|I agree
+我不同意|Ne slažem se|I disagree
+你说得对|U pravu si|You're right
+你说得不对|Nisi u pravu|You're wrong
+我无所谓|Svejedno mi je|I don't mind
+太好了|Super|Great
+非常好|Odlično|Excellent
+真棒|Bravo|Well done
+真可惜|Šteta|What a pity
+不可能|Nema šanse|No way
+真的吗？|Stvarno?|Really?
+天哪|Bože|Oh God
+我累了（男）|Umoran sam|I'm tired (m)
+我累了（女）|Umorna sam|I'm tired (f)
+我饿了（男）|Gladan sam|I'm hungry (m)
+我渴了（男）|Žedan sam|I'm thirsty (m)
+我很无聊|Dosadno mi je|I'm bored
+我很高兴（男）|Srećan sam|I'm happy (m)
+我很紧张（男）|Nervozan sam|I'm nervous (m)
+我很担心（男）|Brinem se|I'm worried`},
+
+{id:"social",lv:"L3",ic:"☕",t:"社交闲聊",tip:"塞尔维亚人社交核心是“喝咖啡”：Hajde na kafu! 被请客时说 Hvala na pozivu。",d:`
+你是做什么工作的？|Čime se baviš?|What do you do?
+你周末做什么？|Šta radiš vikendom?|What do you do at weekends?
+你喜欢塞尔维亚吗？|Da li ti se sviđa Srbija?|Do you like Serbia?
+我很喜欢|Mnogo mi se sviđa|I like it a lot
+这里的人很友好|Ljudi su ljubazni|People are kind
+这里的饭很好吃|Hrana je odlična|The food is excellent
+去喝杯咖啡吗？|Hoćeš li na kafu?|Want to get coffee?
+走，喝咖啡去|Hajde na kafu|Let's go for coffee
+来我们家吧|Dođi kod nas|Come to our place
+我请客|Častim|My treat
+谢谢邀请|Hvala na pozivu|Thanks for the invitation
+很高兴（见到你）|Bilo mi je drago|It was nice
+保持联系|Javi se|Keep in touch
+一路顺风|Srećan put|Have a good trip
+你有兴趣爱好吗？|Imaš li hobi?|Do you have a hobby?
+我喜欢运动|Volim sport|I like sports
+我喜欢骑自行车|Volim da vozim bicikl|I like cycling
+我喜欢做饭|Volim da kuvam|I like cooking`},
+
+{id:"tense",lv:"L3",ic:"⏳",t:"过去时与将来时",tip:"过去时 = sam/si/je… + 过去分词：男 -o（radio），女 -la（radila）。例：Radio sam（我工作了，男）。将来时 = 动词 + ću：Radiću（我将工作），或 Ja ću raditi。",d:`
+我昨天工作了（男）|Juče sam radio|I worked yesterday (m)
+我昨天工作了（女）|Juče sam radila|I worked yesterday (f)
+我去过贝尔格莱德（男）|Bio sam u Beogradu|I was in Belgrade (m)
+我去过贝尔格莱德（女）|Bila sam u Beogradu|I was in Belgrade (f)
+我吃过了（男）|Već sam jeo|I've already eaten (m)
+我看见了（男）|Video sam|I saw it (m)
+我买了面包（男）|Kupio sam hleb|I bought bread (m)
+你昨天做了什么？|Šta si radio juče?|What did you do yesterday?
+我不知道（当时，男）|Nisam znao|I didn't know (m)
+我还没做完（男）|Još nisam završio|I haven't finished yet (m)
+我明天要工作|Radiću sutra|I'll work tomorrow
+我要回家|Ići ću kući|I'll go home
+我八点到|Doći ću u osam|I'll come at eight
+会很冷|Biće hladno|It will be cold
+你明天做什么？|Šta ćeš raditi sutra?|What will you do tomorrow?
+我会给你打电话|Zvaću te|I'll call you`},
+
+{id:"link",lv:"L3",ic:"🔗",t:"连接词、副词、介词",tip:"a 和 ali 都有“但是/而”的意思：a 是轻的对比，ali 是转折。介词后的名词要变格，先整句记住。",d:`
+和|i|and
+而；那么|a|and / while
+但是|ali|but
+或者|ili|or
+因为|jer|because
+因为（较正式）|zato što|because
+所以|zato|so / therefore
+如果|ako|if
+当……时|kada|when
+只|samo|only
+还；再|još|still; more
+已经|već|already
+也|takođe|also
+我也是|I ja|Me too
+我也不|Ni ja|Me neither
+很多|mnogo|a lot
+一点|malo|a little
+太（多）|previše|too much
+足够|dovoljno|enough
+非常|veoma|very
+正好；恰恰|baš|exactly; really
+一定|sigurno|certainly
+一起|zajedno|together
+又；再次|opet|again
+马上|odmah|immediately
+很快|uskoro|soon
+之后|posle|after
+之前|pre|before
+和……一起|sa|with
+没有|bez|without
+为了；给|za|for
+从|od|from
+到|do|to / until
+在……里|u|in
+在……上|na|on / at
+在某人那里|kod|at (someone's place)
+在……旁边|pored|next to
+在……下面|ispod|under
+在……上面|iznad|above
+在……前面|ispred|in front of
+在……后面|iza|behind
+在……之间|između|between`},
+
+/* ================= 工厂 ================= */
+{id:"f-shift",lv:"F",ic:"🕕",t:"上下班与考勤",tip:"三班倒：prva smena 早班，druga smena 中班，treća/noćna smena 夜班。打卡口语说 otkucati karticu。",d:`
+班次|smena|shift
+早班（第一班）|prva smena|first shift
+中班（第二班）|druga smena|second shift
+夜班|noćna smena|night shift
+你上哪个班？|U kojoj si smeni?|Which shift are you on?
+我上早班|Radim prvu smenu|I work the first shift
+我上夜班|Radim noćnu smenu|I work the night shift
+六点开始上班|Smena počinje u šest|The shift starts at six
+两点下班|Smena se završava u dva|The shift ends at two
+打卡|otkucati karticu|to clock in
+工卡|kartica|ID card
+我忘带工卡了（男）|Zaboravio sam karticu|I forgot my card (m)
+我忘带工卡了（女）|Zaboravila sam karticu|I forgot my card (f)
+我迟到了|Kasnim|I'm late
+抱歉我迟到了|Izvinite što kasnim|Sorry I'm late
+公交车晚点了|Autobus je kasnio|The bus was late
+厂车|prevoz|company transport
+去工厂的车在哪停？|Gde staje autobus za fabriku?|Where does the factory bus stop?
+更衣室|svlačionica|changing room
+储物柜|ormarić|locker
+工作服|radna odeća|work clothes
+休息|pauza|break
+什么时候休息？|Kada je pauza?|When is the break?
+休息三十分钟|Pauza je trideset minuta|The break is thirty minutes
+食堂|menza|canteen
+去吃饭吧|Idemo na ručak|Let's go to lunch
+今天就到这里|Gotovo za danas|Done for today
+加班|prekovremeni rad|overtime
+我们要加班|Radimo prekovremeno|We're working overtime
+星期六上班吗？|Da li radimo u subotu?|Are we working on Saturday?
+休息日|slobodan dan|day off
+我明天休息（男）|Sutra sam slobodan|I'm off tomorrow (m)
+排班表|raspored|schedule
+排班表在哪？|Gde je raspored smena?|Where is the shift schedule?`},
+
+{id:"f-people",lv:"F",ic:"👷",t:"岗位与人员",tip:"有事先找 šef smene（班长/值班主管）。“在第几号线”说 na liniji + 数字。",d:`
+工厂|fabrika|factory
+车间|hala|production hall
+生产|proizvodnja|production
+生产线|proizvodna linija|production line
+线|linija|line
+工位|radno mesto|workstation
+操作员|operater|operator
+工人（男）|radnik|worker (m)
+工人（女）|radnica|worker (f)
+老板；领导|šef|boss
+班长／值班主管|šef smene|shift supervisor
+工长|poslovođa|foreman
+组长|vođa tima|team leader
+工艺工程师|tehnolog|process engineer
+工程师|inženjer|engineer
+质检员|kontrolor|inspector
+仓管员|magacioner|warehouse worker
+叉车司机|viljuškarista|forklift driver
+维修部|održavanje|maintenance
+电工|električar|electrician
+机修工|mehaničar|mechanic
+翻译|prevodilac|interpreter
+人事部|kadrovska služba|HR department
+同事（男）|kolega|colleague (m)
+同事（女）|koleginica|colleague (f)
+培训|obuka|training
+我是新来的（男）|Ja sam nov ovde|I'm new here (m)
+我是新来的（女）|Ja sam nova ovde|I'm new here (f)
+我的领导是谁？|Ko je moj šef?|Who is my boss?
+我的工位在哪？|Gde je moje radno mesto?|Where is my workstation?
+我在哪条线？|Na kojoj liniji radim?|Which line do I work on?
+你今天在二号线|Danas radiš na liniji dva|Today you work on line two
+这是你的工位|Ovo je tvoje radno mesto|This is your workstation
+去问班长|Pitaj šefa smene|Ask the shift supervisor
+翻译在哪？|Gde je prevodilac?|Where is the interpreter?`},
+
+{id:"f-process",lv:"F",ic:"⚙️",t:"生产工艺与产品",tip:"汽车零部件厂常见工序：注塑 brizganje、冲压 štancovanje、焊接 zavarivanje、喷涂 lakiranje、电镀 hromiranje、抛光 poliranje、装配 montaža。",d:`
+注塑|brizganje|injection molding
+注塑机|mašina za brizganje|injection molding machine
+模具|kalup|mold
+工装；模具（总称）|alat|tool / die
+换模|promena alata|tool change
+冲压机|presa|press
+冲压|štancovanje|stamping
+焊接|zavarivanje|welding
+喷涂|lakiranje|painting / coating
+喷涂车间|lakirnica|paint shop
+电镀（镀铬）|hromiranje|chrome plating
+电镀|galvanizacija|electroplating
+抛光|poliranje|polishing
+打磨|brušenje|grinding / sanding
+切割|sečenje|cutting
+折弯|savijanje|bending
+钻孔|bušenje|drilling
+装配|montaža|assembly
+粘接|lepljenje|gluing
+包装|pakovanje|packing
+铝|aluminijum|aluminum
+塑料|plastika|plastic
+钢|čelik|steel
+橡胶|guma|rubber
+油漆|boja|paint
+清漆|lak|varnish / clear coat
+零件|deo|part|复数 delovi
+件（计数）|komad|piece
+产品|proizvod|product
+半成品|poluproizvod|semi-finished product
+原材料|sirovina|raw material
+汽车零部件|auto-delovi|car parts
+保险杠|branik|bumper
+装饰条|lajsna|trim strip
+支架|nosač|bracket
+电池壳|kućište baterije|battery housing
+框架|ram|frame
+工艺参数设置|podešavanje|setting / adjustment`},
+
+{id:"f-tools",lv:"F",ic:"🔧",t:"设备与工具",tip:"开机 uključi，关机 isključi。机器出问题第一句：Mašina ne radi, pozovi održavanje!",d:`
+机器|mašina|machine
+机器人|robot|robot
+传送带|pokretna traka|conveyor belt
+按钮|dugme|button
+按键|taster|push button
+开关|prekidač|switch
+急停按钮|taster za hitno zaustavljanje|emergency stop button
+屏幕|ekran|screen
+报警|alarm|alarm
+指示灯|lampica|indicator light
+传感器|senzor|sensor
+电机|motor|motor
+空压机|kompresor|compressor
+压缩空气|vazduh pod pritiskom|compressed air
+油|ulje|oil
+软管|crevo|hose
+电缆|kabl|cable
+插座|utičnica|socket
+叉车|viljuškar|forklift
+托盘|paleta|pallet
+手推车|kolica|trolley
+地牛（手动叉车）|ručni viljuškar|pallet jack
+吊车|dizalica|crane
+螺丝刀|šrafciger|screwdriver
+扳手|ključ|wrench
+锤子|čekić|hammer
+钳子|klešta|pliers
+刀|nož|knife
+剪刀|makaze|scissors
+电钻|bušilica|drill
+螺丝|šraf|screw
+螺母|navrtka|nut
+垫片|podloška|washer
+胶带|lepljiva traka|adhesive tape
+游标卡尺|šubler|caliper
+卷尺|metar|tape measure
+千分尺|mikrometar|micrometer
+秤|vaga|scale
+开机|Uključi mašinu|Turn the machine on
+关机|Isključi mašinu|Turn the machine off
+按这个按钮|Pritisni ovo dugme|Press this button
+机器停了|Mašina je stala|The machine stopped
+机器不工作|Mašina ne radi|The machine doesn't work
+机器坏了|Mašina je u kvaru|The machine is broken
+报警在响|Alarm zvoni|The alarm is ringing
+叫维修|Pozovi održavanje|Call maintenance
+没有气了|Nema vazduha|There's no air
+漏油了|Curi ulje|Oil is leaking
+机器人停了|Robot je stao|The robot stopped
+把机器复位|Resetuj mašinu|Reset the machine`},
+
+{id:"f-quality",lv:"F",ic:"🔍",t:"质量检验",tip:"škart 是废品／不良品，dorada 是返工。很多工厂红箱放不良品：Stavi u crvenu kutiju。",d:`
+质量|kvalitet|quality
+质量控制|kontrola kvaliteta|quality control
+检查|provera|check
+检查（动词）|proveriti|to check
+外观检查|vizuelna kontrola|visual inspection
+缺陷；错误|greška|defect / mistake
+废品；不良品|škart|scrap / reject
+良品|dobar deo|good part
+不良品|loš deo|bad part
+返工|dorada|rework
+划痕|ogrebotina|scratch
+凹坑|udubljenje|dent
+裂纹|pukotina|crack
+气泡|mehurić|bubble
+污点|fleka|stain / spot
+灰尘|prašina|dust
+毛刺|grat|burr
+变形|deformacija|deformation
+尺寸|dimenzija|dimension
+尺寸；测量值|mera|measurement
+公差|tolerancija|tolerance
+样品|uzorak|sample
+图纸|crtež|drawing
+作业指导书|radno uputstvo|work instruction
+标签|etiketa|label
+贴纸|nalepnica|sticker
+批次|serija|batch
+批次号|broj serije|batch number
+报告|izveštaj|report
+客户投诉|reklamacija|customer complaint
+这个零件不好|Ovaj deo nije dobar|This part is not good
+这是废品|Ovo je škart|This is scrap
+有划痕|Ima ogrebotinu|It has a scratch
+有凹坑|Ima udubljenje|It has a dent
+颜色不对|Boja nije dobra|The color is not right
+少了一个零件|Nedostaje jedan deo|One part is missing
+这个要返工|Ovo treba doraditi|This needs rework
+每一件都要检查|Proveri svaki komad|Check every piece
+放到红箱里|Stavi u crvenu kutiju|Put it in the red box
+良品放这里|Dobri delovi idu ovde|Good parts go here
+量一下这个|Izmeri ovo|Measure this
+尺寸超差了|Mera nije u toleranciji|The dimension is out of tolerance
+叫质检员|Pozovi kontrolora|Call the inspector
+这个没问题|Ovo je u redu|This is OK`},
+
+{id:"f-safety",lv:"F",ic:"⛑️",t:"安全与劳保",tip:"听到 Pazi! 或 Stani! 立刻停下。劳保用品不够时说 Trebaju mi nove ...（复数）或 Treba mi nova ...（单数阴性）。",d:`
+小心！|Pazi!|Watch out!
+注意！|Oprezno!|Careful!
+停！|Stani!|Stop!
+别碰！|Ne diraj!|Don't touch!
+烫！|Vruće!|Hot!
+危险|opasno|dangerous
+禁止|zabranjeno|forbidden
+禁止吸烟|zabranjeno pušenje|no smoking
+禁止进入|zabranjen ulaz|no entry
+警告|upozorenje|warning
+不要站在吊物下面|Ne stoj ispod tereta|Don't stand under the load
+戴手套|Nosi rukavice|Wear gloves
+戴上护目镜|Stavi naočare|Put on the safety glasses
+急救箱在哪？|Gde je prva pomoć?|Where is the first aid?
+我受伤了（男）|Povredio sam se|I got hurt (m)
+我受伤了（女）|Povredila sam se|I got hurt (f)
+我割到手指了（男）|Posekao sam prst|I cut my finger (m)
+叫救护车|Zovi hitnu|Call an ambulance
+我需要新手套|Trebaju mi nove rukavice|I need new gloves
+都出去！|Izađite napolje!|Everybody out!
+安全|bezbednost|safety
+职业安全|bezbednost na radu|occupational safety
+防护用品|zaštitna oprema|protective equipment
+手套|rukavice|gloves
+护目镜|zaštitne naočare|safety glasses
+耳塞|čepići za uši|earplugs
+口罩|maska|mask
+安全鞋|zaštitne cipele|safety shoes
+安全帽|šlem|helmet
+反光背心|prsluk|vest
+灭火器|aparat za gašenje požara|fire extinguisher
+火灾|požar|fire
+紧急出口|izlaz u slučaju nužde|emergency exit
+急救|prva pomoć|first aid
+受伤|povreda|injury
+疏散|evakuacija|evacuation
+集合点|zbirno mesto|assembly point`},
+
+{id:"f-orders",lv:"F",ic:"📣",t:"领导常说的指令",tip:"命令式：对一个人用 -i 结尾（Uzmi! 拿！），对多人或礼貌用 -ite（Uzmite!）。听懂这些就能跟上班长。",d:`
+过来|Dođi ovamo|Come here
+去那边|Idi tamo|Go there
+等着|Čekaj|Wait
+稍等一下|Sačekaj malo|Wait a moment
+看|Gledaj|Look
+看看这个|Pogledaj ovo|Look at this
+听着|Slušaj|Listen
+拿着这个|Uzmi ovo|Take this
+把那个给我|Daj mi to|Give me that
+拿个箱子来|Donesi kutiju|Bring a box
+把这个送到仓库|Odnesi ovo u magacin|Take this to the warehouse
+放这里|Stavi ovde|Put it here
+放到托盘上|Stavi na paletu|Put it on the pallet
+把那个拿开|Skloni to|Move that away
+快点|Brže|Faster
+慢点|Polako|Slowly
+仔细点|Pažljivo|Carefully
+再来一次|Još jednom|Once more
+重做|Ponovi|Repeat
+像这样|Ovako|Like this
+不是那样|Ne tako|Not like that
+你来试试|Probaj ti|You try
+帮他一下|Pomozi mu|Help him
+帮她一下|Pomozi joj|Help her
+把工位打扫干净|Očisti radno mesto|Clean the workstation
+大家收拾一下|Počistite|Clean up (everyone)
+开始|Počni|Start
+继续|Nastavi|Continue
+好了，完成|Gotovo|Done
+休息前做完这个|Završi ovo do pauze|Finish this before the break
+数一下件数|Prebroj komade|Count the pieces
+记下来|Zapiši|Write it down
+在这里签字|Potpiši ovde|Sign here
+做完告诉我|Javi mi kad završiš|Tell me when you finish
+有问题就叫我|Pozovi me ako bude problema|Call me if there's a problem`},
+
+{id:"f-me",lv:"F",ic:"🙋‍♂️",t:"我在工位上常说的话",tip:"男女说法不同的句子：男 -o / 女 -la，如 Završio sam / Završila sam（我做完了）。",d:`
+现在我做什么？|Šta sad da radim?|What do I do now?
+这个放哪里？|Gde da stavim ovo?|Where should I put this?
+这样可以吗？|Da li je ovo dobro?|Is this good?
+是这样吗？|Ovako?|Like this?
+请给我示范一下|Pokaži mi, molim te|Show me, please
+能再给我示范一次吗？|Možeš li da mi pokažeš još jednom?|Can you show me once more?
+我没听懂（男）|Nisam razumeo|I didn't understand (m)
+我没听懂（女）|Nisam razumela|I didn't understand (f)
+我懂了|Razumem|I understand
+我做完了（男）|Završio sam|I've finished (m)
+我做完了（女）|Završila sam|I've finished (f)
+没有料了|Nema više materijala|There's no more material
+我还需要箱子|Treba mi još kutija|I need more boxes
+没有标签了|Nema etiketa|There are no labels
+我有个问题|Imam problem|I have a problem
+需要做多少件？|Koliko komada treba?|How many pieces are needed?
+还要多少？|Koliko još?|How many more?
+我可以休息吗？|Mogu li na pauzu?|Can I take a break?
+我可以去厕所吗？|Mogu li da idem u toalet?|Can I go to the toilet?
+班长在哪？|Gde je šef smene?|Where is the shift supervisor?
+我不知道怎么做|Ne znam kako|I don't know how
+我第一次做这个|Prvi put radim ovo|It's my first time doing this
+我不太舒服|Ne osećam se dobro|I don't feel well
+什么时候下班？|Kada je kraj smene?|When does the shift end?
+我能喝点水吗？|Mogu li da popijem vodu?|Can I drink some water?`},
+
+{id:"f-store",lv:"F",ic:"📦",t:"物料与仓库",tip:"物料先进先出：Prvo ulazi, prvo izlazi（FIFO）。",d:`
+仓库|magacin|warehouse
+物料|materijal|material
+库存|zaliha|stock
+箱子|kutija|box
+纸箱|karton|cardboard box
+袋子|kesa|bag
+托盘|paleta|pallet
+标签|etiketa|label
+条形码|bar-kod|barcode
+扫描枪|skener|scanner
+工单|radni nalog|work order
+订单|porudžbina|order
+发货|isporuka|delivery
+卡车|kamion|truck
+装货|utovar|loading
+卸货|istovar|unloading
+装卸平台|rampa|loading dock
+货架|regal|rack
+架子|polica|shelf
+一共|ukupno|total
+一箱有多少件？|Koliko komada ima u kutiji?|How many pieces are in a box?
+一箱五十件|U kutiji ima pedeset komada|There are fifty pieces in a box
+把箱子装满|Napuni kutiju|Fill the box
+箱子满了|Kutija je puna|The box is full
+箱子空了|Kutija je prazna|The box is empty
+我们还需要料|Treba nam još materijala|We need more material
+把托盘送到仓库|Odnesi palete u magacin|Take the pallets to the warehouse
+扫一下标签|Skeniraj etiketu|Scan the label
+先进先出|Prvo ulazi, prvo izlazi|First in, first out`},
+
+{id:"f-units",lv:"F",ic:"📏",t:"数量、尺寸与产量",tip:"产量目标叫 norma。“还差……”说 Fali još ...。",d:`
+件|komad|piece
+双；对|par|pair
+公斤|kilogram|kilogram
+克|gram|gram
+吨|tona|ton
+米|metar|meter
+厘米|centimetar|centimeter
+毫米|milimetar|millimeter
+升|litar|liter
+度|stepen|degree
+百分比|procenat|percent
+巴（压力）|bar|bar
+两倍|duplo|double
+一半|pola|half
+整个|ceo|whole
+更多|više|more
+更少|manje|less
+平均|prosek|average
+定额；产量目标|norma|quota / target
+目标|cilj|goal
+温度|temperatura|temperature
+压力|pritisak|pressure
+定额是多少？|Koliko je norma?|What's the quota?
+每班定额五百件|Norma je petsto komada po smeni|The quota is 500 pieces per shift
+今天我们做了四百件|Danas smo uradili četiristo komada|Today we made 400 pieces
+还差一百件|Fali još sto komada|Still 100 pieces short
+五毫米|Pet milimetara|Five millimeters
+温度太高|Temperatura je previsoka|The temperature is too high
+压力低|Pritisak je nizak|The pressure is low`},
+
+{id:"f-hr",lv:"F",ic:"📝",t:"工资、请假与人事",tip:"病假叫 bolovanje，年假叫 godišnji odmor（口语 godišnji）。请病假通常要交医生证明。",d:`
+工资|plata|salary
+工资条|platni listić|payslip
+预支工资|akontacija|advance payment
+奖金|bonus|bonus
+劳动合同|ugovor o radu|employment contract
+试用期|probni rad|probation period
+年假|godišnji odmor|annual leave
+休息日|slobodan dan|day off
+病假|bolovanje|sick leave
+医生证明|lekarsko opravdanje|doctor's note
+请假；缺勤|odsustvo|absence / leave
+辞职；解雇|otkaz|resignation / dismissal
+工作许可|radna dozvola|work permit
+在职证明|potvrda o zaposlenju|employment certificate
+什么时候发工资？|Kada je plata?|When is payday?
+我对工资有个问题|Imam pitanje o plati|I have a question about my salary
+加班费没给我|Nisu mi platili prekovremeni|They didn't pay my overtime
+我想请一天假|Želim da uzmem slobodan dan|I'd like to take a day off
+我可以休年假吗？|Mogu li da uzmem godišnji?|Can I take annual leave?
+我病了，不能来上班（男）|Bolestan sam, ne mogu da dođem na posao|I'm sick and can't come to work (m)
+我会带医生证明来|Doneću lekarsko opravdanje|I'll bring a doctor's note
+我该找谁？|Kome treba da se javim?|Who should I report to?
+我需要在职证明|Treba mi potvrda o zaposlenju|I need an employment certificate`},
+];
+
+</script>
+<script>
+const ABC=[["A a","А а","像 a"],["B b","Б б","b（带声）"],["C c","Ц ц","拼音 c"],["Č č","Ч ч","拼音 ch（翘舌）"],["Ć ć","Ћ ћ","拼音 q（软）"],["D d","Д д","d（带声）"],["Dž dž","Џ џ","拼音 zh（带声）"],["Đ đ","Ђ ђ","拼音 j（带声）"],["E e","Е е","ei 里的 e"],["F f","Ф ф","f"],["G g","Г г","g（带声）"],["H h","Х х","拼音 h"],["I i","И и","拼音 i"],["J j","Ј ј","拼音 y"],["K k","К к","像 g（不送气）"],["L l","Л л","l"],["Lj lj","Љ љ","li 快读成一个音"],["M m","М м","m"],["N n","Н н","n"],["Nj nj","Њ њ","ni 快读成一个音"],["O o","О о","拼音 o"],["P p","П п","像 b（不送气）"],["R r","Р р","大舌颤音"],["S s","С с","拼音 s"],["Š š","Ш ш","拼音 sh"],["T t","Т т","像 d（不送气）"],["U u","У у","拼音 u"],["V v","В в","英语 v"],["Z z","З з","英语 z"],["Ž ž","Ж ж","pleasure 的 s"]];
+
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let script=store.get("script","lat"), showEn=store.get("showEn",true), prog=store.get("prog2",{});
+const ALL=[];
+UNITS.forEach((u,ui)=>{
+  u.items=u.d.trim().split("\n").map((l,i)=>{const p=l.split("|");
+    const x={id:u.id+"-"+i,unit:u.id,lv:u.lv,zh:p[0].trim(),sr:p[1].trim(),en:(p[2]||"").trim(),note:(p[3]||"").trim()};
+    x.sent=/[?!]$/.test(x.sr)||(/\s/.test(x.sr)&&/^[A-ZČĆĐŠŽ]/.test(x.sr));
+    ALL.push(x);return x});
+});
+const unitById=id=>UNITS.find(u=>u.id===id);
+function pool(sel){
+  if(sel==="all")return ALL;
+  if(sel.startsWith("lv:"))return ALL.filter(x=>x.lv===sel.slice(3));
+  return ALL.filter(x=>x.unit===sel);
+}
+const MAP={a:"а",b:"б",c:"ц",č:"ч",ć:"ћ",d:"д",đ:"ђ",e:"е",f:"ф",g:"г",h:"х",i:"и",j:"ј",k:"к",l:"л",m:"м",n:"н",o:"о",p:"п",r:"р",s:"с",š:"ш",t:"т",u:"у",v:"в",z:"з",ž:"ж"};
+const DG=[["dž","џ"],["Dž","Џ"],["lj","љ"],["Lj","Љ"],["nj","њ"],["Nj","Њ"]];
+function toCyr(s){let o=s;DG.forEach(([a,b])=>o=o.split(a).join(b));
+  return o.replace(/[A-Za-zČĆĐŠŽčćđšž]/g,ch=>{const lo=ch.toLowerCase(),m=MAP[lo];return m?(ch===lo?m:m.toUpperCase()):ch})}
+const sr=s=>script==="cyr"?toCyr(s):s;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const js=s=>esc(JSON.stringify(s));
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove("on"),2200)}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* 语音 */
+const NATIVE=!!window.AndroidTTS;
+let voices=[];
+function loadVoices(){try{voices=speechSynthesis.getVoices()||[]}catch(e){voices=[]}showVoiceInfo()}
+if("speechSynthesis" in window){loadVoices();try{speechSynthesis.onvoiceschanged=loadVoices}catch(e){}}
+function pickVoice(lang){const pref=lang==="sr"?["sr","hr","bs","sh"]:["en-us","en-gb","en"];
+  for(const p of pref){const v=voices.find(v=>v.lang&&v.lang.toLowerCase().replace("_","-").startsWith(p));if(v)return v}return null}
+function nativeStatus(){try{return JSON.parse(AndroidTTS.status())}catch(e){return {ready:false,sr:"",en:""}}}
+function say(text,lang){
+  if(NATIVE){
+    const st=nativeStatus();
+    if(lang==="sr"&&st.ready&&!st.sr&&!say.w){say.w=1;toast("手机里没有塞语/克语语音包，见「更多 → 说明」")}
+    try{AndroidTTS.speak(text.replace(/\.\.\.|…/g," "),lang,lang==="sr"?0.85:0.95)}catch(e){}
+    return;
+  }
+  if(!("speechSynthesis" in window)){toast("此浏览器不支持朗读");return}
+  const v=pickVoice(lang);
+  if(!v&&lang==="sr"&&!say.w){say.w=1;toast("手机里没有塞语/克语语音包，见「更多 → 说明」")}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text.replace(/\.\.\.|…/g," "));
+    if(v){u.voice=v;u.lang=v.lang}else u.lang=lang==="sr"?"sr-RS":"en-US";u.rate=lang==="sr"?0.8:0.9;speechSynthesis.speak(u)}catch(e){}
+}
+function showVoiceInfo(){const el=document.getElementById("voiceInfo");if(!el)return;
+  if(NATIVE){const st=nativeStatus();
+    el.innerHTML="<b>本机语音检测</b><br>"+(!st.ready?"语音引擎正在启动，稍后再看…":
+      "塞尔维亚语："+(st.sr?"✅ 可用（"+esc(st.sr)+"）":"❌ 未安装")+"<br>英语："+(st.en?"✅ 可用":"❌ 未安装"))+
+      '<div class="row"><button class="btn ghost" onclick="try{AndroidTTS.openSettings()}catch(e){}">打开手机语音设置</button></div>'+
+      '<div style="font-size:12px;color:var(--muted);margin-top:6px">在设置里选择 Google 语音引擎 → 安装语音数据 → 下载「塞尔维亚语」或「克罗地亚语」。</div>';
+    return}
+  const s=pickVoice("sr"),e=pickVoice("en");
+  el.innerHTML="<b>本机语音检测</b><br>塞尔维亚语："+(s?"✅ "+esc(s.name)+"（"+esc(s.lang)+"）":"❌ 未找到（下载塞语或克罗地亚语语音包）")+"<br>英语："+(e?"✅ "+esc(e.name):"❌ 未找到")}
+
+/* 间隔复习 */
+const DAY=86400000,GAPS=[0,1,3,7,14,30];
+function rate(id,ok){const p=prog[id]||{b:0,due:0};p.b=ok?Math.min(p.b+1,5):0;p.due=Date.now()+(ok?GAPS[p.b]*DAY:0);prog[id]=p;store.set("prog2",prog)}
+const isKnown=id=>prog[id]&&prog[id].b>=3;
+const isDue=id=>!prog[id]||prog[id].due<=Date.now();
+
+/* 课程列表 */
+function unitRow(u,n){
+  const k=u.items.filter(x=>isKnown(x.id)).length,pct=Math.round(k/u.items.length*100);
+  const w=u.items.filter(x=>!x.sent).length,s=u.items.length-w;
+  return `<button class="unit${pct>=80?" done":""}" onclick="openUnit('${u.id}')"><div class="no">${pct>=80?"✓":n}</div>
+   <div class="ic">${u.ic}</div><div class="mid"><div class="t">${esc(u.t)}</div>
+   <div class="n">词汇 ${w} · 句子 ${s} · 已掌握 ${pct}%</div><div class="bar"><i style="width:${pct}%"></i></div></div></button>`;
+}
+function renderCourse(){
+  let h="";
+  LEVELS.filter(l=>l.id!=="F").forEach(l=>{
+    const us=UNITS.filter(u=>u.lv===l.id);
+    h+=`<div class="lvhead"><div class="t">${l.t}</div><div class="s">${l.sub}</div></div>`;
+    h+=us.map(u=>unitRow(u,UNITS.filter(x=>x.lv!=="F").indexOf(u)+1)).join("");
+  });
+  document.getElementById("courseList").innerHTML=h;
+}
+function renderFactory(){
+  const us=UNITS.filter(u=>u.lv==="F"),n=us.reduce((a,u)=>a+u.items.length,0);
+  document.getElementById("factoryHome").innerHTML=`<div class="fachero"><div class="t">🏭 工厂实用塞尔维亚语</div>
+   <div class="s">汽车零部件工厂常用：班次考勤、岗位、注塑/冲压/喷涂/电镀等工艺、设备、质检、安全、班长指令、请假工资。共 ${us.length} 课 ${n} 条。</div></div>`
+   +us.map((u,i)=>unitRow(u,"F"+(i+1))).join("");
+}
+
+/* 单元页 */
+let curUnit=null,backTo="course";
+function itemHTML(x,showUnit){
+  const p=prog[x.id],lv=p?p.b:-1;
+  const tag=lv>=3?'<span class="lvl" style="background:var(--green)">熟</span>':lv>=1?'<span class="lvl" style="background:var(--amber)">学</span>':"";
+  return `<div class="item"><div class="txt"><div class="zh">${esc(x.zh)}${showUnit?` <span style="font-size:11px">· ${esc(unitById(x.unit).t)}</span>`:""}</div>
+   <div class="sr">${esc(sr(x.sr))}</div>${showEn?`<div class="en">${esc(x.en)}</div>`:""}
+   ${x.note?`<div class="note">💡 ${esc(x.note)}</div>`:""}</div>${tag}
+   <button class="spk" onclick="say(${js(x.sr)},'sr')">🔊</button>
+   ${showEn?`<button class="spk en-s" onclick="say(${js(x.en)},'en')">EN</button>`:""}</div>`;
+}
+function openUnit(id,keepScroll){
+  const u=unitById(id);curUnit=id;backTo=u.lv==="F"?"factory":"course";
+  const words=u.items.filter(x=>!x.sent),sents=u.items.filter(x=>x.sent);
+  document.getElementById("uTitle").textContent=u.ic+" "+u.t;
+  document.getElementById("uBody").innerHTML=`<div class="tip"><b>📌 要点</b><br>${esc(u.tip)}</div>
+   <div class="row" style="margin-top:0"><button class="btn" onclick="goStudy('${id}','cards')">🃏 闪卡学这课</button><button class="btn green" onclick="goStudy('${id}','quiz')">✅ 测这课</button></div>
+   ${words.length?`<div class="sec">词汇（${words.length}）</div>`+words.map(x=>itemHTML(x)).join(""):""}
+   ${sents.length?`<div class="sec">短语与句子（${sents.length}）</div>`+sents.map(x=>itemHTML(x)).join(""):""}
+   ${nextBtn(id)}`;
+  show("unit",backTo);if(!keepScroll)window.scrollTo(0,0);
+}
+function nextBtn(id){const same=UNITS.filter(u=>u.lv==="F"?unitById(id).lv==="F":unitById(id).lv!=="F");
+  const i=same.findIndex(u=>u.id===id),n=same[i+1];return n?`<div class="row"><button class="btn ghost" onclick="openUnit('${n.id}')">下一课：${n.ic} ${esc(n.t)} ›</button></div>`:""}
+document.getElementById("unitBack").onclick=()=>{curUnit=null;show(backTo)};
+function goStudy(id,v){document.getElementById(v==="cards"?"fcCat":"qzCat").value=id;show(v);v==="cards"?fcStart():qzStart()}
+
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/đ/g,"d")}
+function doSearch(){
+  const q=document.getElementById("q").value.trim(),box=document.getElementById("searchRes");
+  if(!q){box.innerHTML="";document.getElementById("courseList").style.display="";return}
+  document.getElementById("courseList").style.display="none";const n=norm(q);
+  const r=ALL.filter(x=>x.zh.includes(q)||norm(x.sr).includes(n)||norm(toCyr(x.sr)).includes(n)||norm(x.en).includes(n)).slice(0,80);
+  box.innerHTML='<div style="height:10px"></div>'+(r.length?r.map(x=>itemHTML(x,true)).join(""):'<div class="empty">没有找到</div>');
+}
+
+/* 下拉选项 */
+function fillSelect(id){
+  let h='<option value="all">全部（'+ALL.length+'）</option>';
+  LEVELS.forEach(l=>{h+=`<optgroup label="${l.t}"><option value="lv:${l.id}">${l.t} · 全部</option>`;
+    UNITS.filter(u=>u.lv===l.id).forEach(u=>h+=`<option value="${u.id}">${u.ic} ${esc(u.t)}</option>`);h+="</optgroup>"});
+  document.getElementById(id).innerHTML=h;
+}
+
+/* 闪卡 */
+let fc={list:[],i:0,flip:false};
+function fcStart(){
+  const items=pool(document.getElementById("fcCat").value),due=items.filter(x=>isDue(x.id));
+  fc.list=shuffle(due.filter(x=>prog[x.id])).concat(due.filter(x=>!prog[x.id]).slice(0,20));fc.i=0;fc.flip=false;
+  document.getElementById("fcInfo").textContent=`本组 ${fc.list.length} 张（新词每组最多 20）`;fcShow();
+}
+function fcSides(x){const S={zh:{t:x.zh},sr:{t:sr(x.sr),l:"sr",raw:x.sr},en:{t:x.en,l:"en",raw:x.en}};const [a,b]=document.getElementById("fcDir").value.split("-");return [S[a],S[b]]}
+function fcShow(){
+  const box=document.getElementById("fcBox");document.getElementById("fcLeft").textContent=fc.list.length?`剩余 ${Math.max(fc.list.length-fc.i,0)}`:"";
+  if(fc.i>=fc.list.length){box.innerHTML=`<div class="fc"><div style="font-size:44px">🎉</div><div class="big" style="font-size:20px;margin-top:8px">这一组完成了！</div>
+    <div class="hint">没有到期的卡片了。明天再来，或换一课。</div></div><div class="row"><button class="btn ghost" onclick="fcAll()">把这个范围全部再练一遍</button></div>`;return}
+  const x=fc.list[fc.i],[f,b]=fcSides(x);
+  box.innerHTML=`<div class="fc" onclick="fcFlip()"><div class="big">${esc(f.t)}</div>
+   ${f.l?`<button class="spk" style="margin-top:10px" onclick="event.stopPropagation();say(${js(f.raw)},'${f.l}')">🔊</button>`:""}
+   ${fc.flip?`<div class="ans"><div class="big" style="font-size:23px;color:var(--red)">${esc(b.t)}</div>
+     ${b.l?`<button class="spk" style="margin-top:8px" onclick="event.stopPropagation();say(${js(b.raw)},'${b.l}')">🔊</button>`:""}
+     <div class="zh" style="margin-top:8px">${esc(x.zh)} · ${esc(sr(x.sr))}${showEn?" · "+esc(x.en):""}</div>
+     ${x.note?`<div class="note">💡 ${esc(x.note)}</div>`:""}</div>`:`<div class="hint">先在心里说出答案，再点卡片翻面</div>`}</div>
+   ${fc.flip?`<div class="row"><button class="btn red" onclick="fcRate(false)">不会 ✗</button><button class="btn green" onclick="fcRate(true)">会了 ✓</button></div>`
+   :`<div class="row"><button class="btn" onclick="fcFlip()">翻面</button></div>`}`;
+  if(fc.flip&&b.l==="sr")say(b.raw,"sr");
+}
+function fcFlip(){if(!fc.flip){fc.flip=true;fcShow()}}
+function fcRate(ok){const x=fc.list[fc.i];rate(x.id,ok);if(!ok)fc.list.push(x);fc.i++;fc.flip=false;fcShow()}
+function fcAll(){fc.list=shuffle(pool(document.getElementById("fcCat").value));fc.i=0;fc.flip=false;document.getElementById("fcInfo").textContent=`本组 ${fc.list.length} 张`;fcShow()}
+
+/* 测验 */
+let qz={list:[],i:0,score:0,done:false};
+function qzStart(){qz.list=shuffle(pool(document.getElementById("qzCat").value)).slice(0,10);qz.i=0;qz.score=0;qzShow()}
+function qzShow(){
+  const box=document.getElementById("qzBox"),mode=document.getElementById("qzMode").value;
+  document.getElementById("qzScore").textContent=`得分 ${qz.score}`;
+  document.getElementById("qzNum").textContent=qz.i<qz.list.length?`第 ${qz.i+1} / ${qz.list.length} 题`:"";
+  if(qz.i>=qz.list.length){const pct=Math.round(qz.score/qz.list.length*100);
+    box.innerHTML=`<div class="q"><div style="font-size:44px">${pct>=80?"🏆":pct>=50?"👍":"💪"}</div><div class="big">${qz.score} / ${qz.list.length}</div>
+     <div class="lab" style="margin-top:8px">${pct>=80?"太棒了！可以学下一课":pct>=50?"不错，再复习一下":"回到课程多读几遍再来"}</div></div>
+     <div class="row"><button class="btn" onclick="qzStart()">再来一组</button></div>`;return}
+  const x=qz.list[qz.i];qz.done=false;
+  if(mode==="type"){
+    box.innerHTML=`<div class="q"><div class="lab">用塞尔维亚语（拉丁字母）写出：</div><div class="big">${esc(x.zh)}</div>${x.note?`<div class="note">💡 ${esc(x.note)}</div>`:""}</div>
+     <input class="type" id="tIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="输入答案…" onkeydown="if(event.key==='Enter')qzType()">
+     <div style="font-size:12px;color:var(--muted);margin-top:6px">可以不打特殊符号：c 代替 č/ć，s 代替 š，z 代替 ž，d 或 dj 代替 đ</div>
+     <div class="feedback" id="fb"></div>
+     <div class="row" id="tRow"><button class="btn ghost" onclick="qzType(true)">不会，看答案</button><button class="btn" onclick="qzType()">确定</button></div>`;
+    setTimeout(()=>{const i=document.getElementById("tIn");if(i)i.focus()},50);return}
+  const [qf,af]={"zh-sr":["zh","sr"],"sr-zh":["sr","zh"],"zh-en":["zh","en"],"sr-en":["sr","en"],"listen":["sr","zh"]}[mode];
+  let src=pool(document.getElementById("qzCat").value);
+  // 干扰项：优先同类型（词配词、句配句），不够就从全部里补
+  let cand=src.filter(y=>y.id!==x.id&&y[af]!==x[af]&&y.sent===x.sent);
+  if(cand.length<3)cand=cand.concat(ALL.filter(y=>y.id!==x.id&&y[af]!==x[af]&&y.sent===x.sent&&!cand.includes(y)));
+  const seen=new Set([x[af]]),wrong=[];for(const y of shuffle(cand)){if(!seen.has(y[af])){seen.add(y[af]);wrong.push(y)}if(wrong.length===3)break}
+  const opts=shuffle([x,...wrong]),lab={zh:"中文",sr:"塞尔维亚语",en:"英语"};
+  const qtxt=qf==="sr"?sr(x.sr):x[qf];
+  box.innerHTML=`<div class="q"><div class="lab">${mode==="listen"?"听发音，选出意思":"选出正确的"+lab[af]}</div>
+   ${mode==="listen"?`<button class="spk" style="width:72px;height:72px;font-size:30px;margin-top:10px" onclick="say(${js(x.sr)},'sr')">🔊</button>`:`<div class="big">${esc(qtxt)}</div>`}
+   ${qf==="sr"&&mode!=="listen"?`<button class="spk" style="margin-top:8px" onclick="say(${js(x.sr)},'sr')">🔊</button>`:""}</div>
+   <div class="opts">${opts.map(o=>`<button class="opt" data-ok="${o.id===x.id}" onclick="qzPick(this)">${esc(af==="sr"?sr(o.sr):o[af])}</button>`).join("")}</div>
+   <div class="feedback" id="fb"></div>`;
+  if(mode==="listen")setTimeout(()=>say(x.sr,"sr"),250);
+}
+function qzPick(btn){if(qz.done)return;qz.done=true;const ok=btn.dataset.ok==="true",x=qz.list[qz.i];
+  document.querySelectorAll(".opt").forEach(b=>{if(b.dataset.ok==="true")b.classList.add("ok")});
+  if(!ok)btn.classList.add("bad");else qz.score++;rate(x.id,ok);
+  document.getElementById("fb").innerHTML=(ok?"✅ 正确！ ":"❌ 正确答案： ")+`<b>${esc(sr(x.sr))}</b> = ${esc(x.zh)}${showEn?" = "+esc(x.en):""}`;
+  say(x.sr,"sr");setTimeout(()=>{qz.i++;qzShow()},ok?1300:2800)}
+function loose(s){return norm(s).replace(/dj/g,"d").replace(/\.\.\./g,"").replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ").trim()}
+function qzType(giveUp){
+  if(qz.done){qz.i++;qzShow();return}
+  const x=qz.list[qz.i],v=document.getElementById("tIn").value||"";
+  const ans=x.sr.split("/").map(s=>s.trim()).concat([x.sr]);
+  const strip=s=>s.toLowerCase().replace(/\.\.\./g,"").replace(/[!?.,]/g,"").replace(/\s+/g," ").trim();
+  const exact=ans.some(a=>strip(a)===strip(v)),close=ans.some(a=>loose(a)===loose(v));
+  const ok=!giveUp&&v.trim()&&(exact||close);qz.done=true;if(ok)qz.score++;rate(x.id,!!ok);
+  document.getElementById("fb").innerHTML=ok?(exact?"✅ 完全正确！":`✅ 对了！标准写法：<b>${esc(x.sr)}</b>`):`❌ 正确答案：<b>${esc(x.sr)}</b>`;
+  say(x.sr,"sr");document.getElementById("tRow").innerHTML='<button class="btn" onclick="qzType()">下一题 ›</button>';
+}
+
+/* 更多 */
+function moreTab(n){[1,2,3].forEach(i=>{document.getElementById("more"+i).style.display=i===n?"":"none";document.getElementById("m"+i).classList.toggle("on",i===n)});if(n===3)showVoiceInfo();if(n===1)updateStats()}
+function renderAbc(){document.getElementById("abcGrid").innerHTML=ABC.map(([l,c,p])=>`<div class="L" onclick="say(${js(l.split(" ")[1])},'sr')"><div class="a">${l}</div><div class="c">${c}</div><div class="p">${p}</div></div>`).join("")}
+function updateStats(){
+  document.getElementById("sTotal").textContent=ALL.length;
+  document.getElementById("sKnown").textContent=ALL.filter(x=>isKnown(x.id)).length;
+  document.getElementById("sLearning").textContent=ALL.filter(x=>prog[x.id]&&!isKnown(x.id)).length;
+  document.getElementById("sDue").textContent=ALL.filter(x=>prog[x.id]&&prog[x.id].due<=Date.now()).length;
+  document.getElementById("lvStats").innerHTML=LEVELS.map(l=>{const it=ALL.filter(x=>x.lv===l.id),k=it.filter(x=>isKnown(x.id)).length,p=Math.round(k/it.length*100);
+    return `<div class="box" style="padding:12px 14px;margin-bottom:8px"><b>${l.t}</b> <span style="float:right;color:var(--muted)">${k} / ${it.length}</span><div class="bar"><i style="width:${p}%"></i></div></div>`}).join("");
+}
+function resetAll(){if(!resetAll.a){resetAll.a=1;toast("再点一次确认清除");setTimeout(()=>resetAll.a=0,3000);return}
+  resetAll.a=0;prog={};store.set("prog2",prog);updateStats();renderCourse();renderFactory();toast("已清除")}
+
+/* 设置与导航 */
+function setScript(s){script=s;store.set("script",s);syncPills();rerender()}
+function toggleEn(){showEn=!showEn;store.set("showEn",showEn);syncPills();rerender()}
+function syncPills(){document.getElementById("tLat").classList.toggle("on",script==="lat");document.getElementById("tCyr").classList.toggle("on",script==="cyr");document.getElementById("tEn").classList.toggle("on",showEn)}
+let curView="course";
+function rerender(){if(curView==="unit"&&curUnit)openUnit(curUnit,true);else{renderCourse();renderFactory();doSearch()}
+  if(fc.list.length)fcShow();if(qz.list.length&&!qz.done)qzShow()}
+function show(v,navAs){curView=v;
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  const nv=navAs||v;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{const v=b.dataset.v;
+  if(v==="course")renderCourse();if(v==="factory")renderFactory();
+  show(v);if(v==="cards"&&!fc.list.length)fcStart();if(v==="quiz"&&!qz.list.length)qzStart();if(v==="more")moreTab(1);window.scrollTo(0,0)});
+
+/* 安卓返回键：能在应用内返回就返回，否则退出 */
+window.appBack=function(){
+  if(curView==="unit"){curUnit=null;show(backTo);return true}
+  if(curView!=="course"){renderCourse();show("course");window.scrollTo(0,0);return true}
+  const q=document.getElementById("q");if(q.value){q.value="";doSearch();return true}
+  return false;
+};
+fillSelect("fcCat");fillSelect("qzCat");syncPills();renderCourse();renderFactory();renderAbc();updateStats();
+</script>
+</body>
+</html>

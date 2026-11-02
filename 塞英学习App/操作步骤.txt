@@ -1,0 +1,29 @@
+塞英学习 App —— 在 GitHub 上打包安装包的步骤
+
+这个文件夹里有：
+  serbian-english.html   学习内容（要上传）
+  android-project.zip    安卓程序（要上传，不要解压）
+  build-yml.txt          打包配置（打开后全部复制）
+
+1. 登录 github.com，点右上角 + → New repository
+   名字填 serbian-app，勾选 Add a README file，点 Create repository。
+
+2. 在仓库页面点 Add file → Upload files
+   把 serbian-english.html 和 android-project.zip 两个文件拖进去，
+   点 Commit changes。
+
+3. 再点 Add file → Create new file
+   文件名输入：.github/workflows/build.yml
+   用记事本打开 build-yml.txt，Ctrl+A 全选，Ctrl+C 复制，
+   粘贴到 GitHub 的编辑框里，点 Commit changes。
+
+4. 点仓库上方的 Actions，等大约 5 分钟。
+   绿色 ✓ = 成功；红色 ✗ = 失败，截图发给 Claude。
+
+5. 回到仓库首页，右侧 Releases → 最新版本 → 下载 SerbianEnglish.apk。
+
+6. 把 apk 发到手机（微信文件传输助手、数据线都可以），在手机上点开安装。
+   提示“允许安装未知应用”就允许；提示“Play 保护机制”就点“仍然安装”。
+
+7. 打开 App → 更多 → 说明 → 打开手机语音设置，
+   下载“塞尔维亚语”或“克罗地亚语”语音包，🔊 才有声音。
