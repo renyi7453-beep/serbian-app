@@ -175,7 +175,7 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
     </div>
     <div id="more3" style="display:none">
       <div class="box"><b>推荐学习顺序</b><br>
-        1. 先看「字母发音」，把 30 个字母读准。<br>
+        1. 先学课程里的「零级 · 字母与发音」三课，把 30 个字母和难点发音读准。<br>
         2. 「课程」从第一级第 1 课开始，一天 1 课：先读“要点”，再把词汇、句子每条点 🔊 跟读 3 遍。<br>
         3. 每课学完点「闪卡学这课」，然后「测这课」，正确率 80% 以上再学下一课。<br>
         4. 每天打开「闪卡」选“全部”，把到期的卡复习完（不会的词会更早出现，会的词隔 1、3、7、14、30 天再出现）。<br>
@@ -202,12 +202,116 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
 <script>
 /* 每行：中文|塞尔维亚语(拉丁)|English|备注(可选) */
 const LEVELS = [
+ {id:"L0", t:"零级 · 字母与发音", sub:"先把 30 个字母和难点发音读准，后面学什么都快"},
  {id:"L1", t:"第一级 · 入门", sub:"打基础：问候、介绍、数字、时间、基本动词"},
  {id:"L2", t:"第二级 · 生活", sub:"能自己吃饭、购物、租房、坐车、看病"},
  {id:"L3", t:"第三级 · 进阶", sub:"办事、约人、表达想法、过去和将来"},
  {id:"F",  t:"工厂实用", sub:"上班、生产线、质量、安全、请假工资"},
 ];
 const UNITS = [
+{id:"abc",lv:"L0",ic:"🔤",t:"字母表与字母名称",tip:"塞尔维亚语有 30 个字母，一个字母只对应一个音，怎么写就怎么读。下面的“塞语”一栏是字母的名字（就像英语 A 读 ei、B 读 bi）：元音字母名就是本音（a, e, i, o, u），辅音字母多数是“辅音 + e”（be, ce, de）。点 🔊 听字母名，再看备注里的例词。",d:`
+字母 A a（像拼音 a）|a|letter A|例词：auto 汽车
+字母 B b（像 b（带声））|be|letter B|例词：brat 兄弟
+字母 C c（拼音 c（永远不读 k））|ce|letter C|例词：cena 价格
+字母 Č č（拼音 ch（翘舌，硬））|če|letter Č|例词：čaj 茶
+字母 Ć ć（拼音 q（软））|će|letter Ć|例词：kuća 房子
+字母 D d（像 d（带声））|de|letter D|例词：dan 天
+字母 Dž dž（像拼音 zh 但带声）|dže|letter Dž|例词：džep 口袋
+字母 Đ đ（像拼音 j 但带声）|đe|letter Đ|例词：đak 学生
+字母 E e（像 ei 里的 e）|e|letter E|例词：evro 欧元
+字母 F f（像 f）|ef|letter F|例词：fabrika 工厂
+字母 G g（像 g（带声））|ge|letter G|例词：grad 城市
+字母 H h（拼音 h（喉音））|ha|letter H|例词：hleb 面包
+字母 I i（拼音 i）|i|letter I|例词：ime 名字
+字母 J j（拼音 y）|je|letter J|例词：jaje 鸡蛋
+字母 K k（像拼音 g（不送气））|ka|letter K|例词：kafa 咖啡
+字母 L l（像 l）|el|letter L|例词：lek 药
+字母 Lj lj（li 快读成一个音）|elj|letter Lj|例词：ljudi 人们
+字母 M m（像 m）|em|letter M|例词：mleko 牛奶
+字母 N n（像 n）|en|letter N|例词：noć 夜里
+字母 Nj nj（ni 快读成一个音）|enj|letter Nj|例词：knjiga 书
+字母 O o（拼音 o）|o|letter O|例词：oko 眼睛
+字母 P p（像拼音 b（不送气））|pe|letter P|例词：pivo 啤酒
+字母 R r（大舌颤音（打舌））|er|letter R|例词：riba 鱼
+字母 S s（拼音 s）|es|letter S|例词：sir 奶酪
+字母 Š š（拼音 sh）|eš|letter Š|例词：škola 学校
+字母 T t（像拼音 d（不送气））|te|letter T|例词：tri 三
+字母 U u（拼音 u）|u|letter U|例词：ulica 街道
+字母 V v（英语 v（上齿碰下唇））|ve|letter V|例词：voda 水
+字母 Z z（英语 z）|ze|letter Z|例词：zima 冬天
+字母 Ž ž（英语 pleasure 的 s）|že|letter Ž|例词：žena 妻子；女人`},
+{id:"spell",lv:"L0",ic:"🗣️",t:"例词拼读",tip:"每个字母一个例词。先看“拆读”，一个字母一个字母慢慢读，再连起来读整个词。dž、lj、nj 虽然写成两个字母，但只读一个音。",d:`
+汽车（字母 A）|auto|car|拆读：a·u·t·o
+兄弟（字母 B）|brat|brother|拆读：b·r·a·t
+价格（字母 C）|cena|price|拆读：c·e·n·a
+茶（字母 Č）|čaj|tea|拆读：č·a·j
+房子（字母 Ć）|kuća|house|拆读：k·u·ć·a
+天（字母 D）|dan|day|拆读：d·a·n
+口袋（字母 Dž）|džep|pocket|拆读：dž·e·p
+学生（字母 Đ）|đak|pupil|拆读：đ·a·k
+欧元（字母 E）|evro|euro|拆读：e·v·r·o
+工厂（字母 F）|fabrika|factory|拆读：f·a·b·r·i·k·a
+城市（字母 G）|grad|city|拆读：g·r·a·d
+面包（字母 H）|hleb|bread|拆读：h·l·e·b
+名字（字母 I）|ime|name|拆读：i·m·e
+鸡蛋（字母 J）|jaje|egg|拆读：j·a·j·e
+咖啡（字母 K）|kafa|coffee|拆读：k·a·f·a
+药（字母 L）|lek|medicine|拆读：l·e·k
+人们（字母 Lj）|ljudi|people|拆读：lj·u·d·i
+牛奶（字母 M）|mleko|milk|拆读：m·l·e·k·o
+夜里（字母 N）|noć|night|拆读：n·o·ć
+书（字母 Nj）|knjiga|book|拆读：k·nj·i·g·a
+眼睛（字母 O）|oko|eye|拆读：o·k·o
+啤酒（字母 P）|pivo|beer|拆读：p·i·v·o
+鱼（字母 R）|riba|fish|拆读：r·i·b·a
+奶酪（字母 S）|sir|cheese|拆读：s·i·r
+学校（字母 Š）|škola|school|拆读：š·k·o·l·a
+三（字母 T）|tri|three|拆读：t·r·i
+街道（字母 U）|ulica|street|拆读：u·l·i·c·a
+水（字母 V）|voda|water|拆读：v·o·d·a
+冬天（字母 Z）|zima|winter|拆读：z·i·m·a
+妻子；女人（字母 Ž）|žena|wife; woman|拆读：ž·e·n·a`},
+{id:"hard",lv:"L0",ic:"🎯",t:"难点发音对比",tip:"中国人最容易混的：č（硬，翘舌）和 ć（软，像 q）；dž（硬）和 đ（软）；š/ž 和 s/z；c 永远读 ts。还有 r 可以当元音：prst（手指）、srce（心）里没有元音字母，r 本身就是音节，要打舌读出来。",d:`
+茶（č 硬 ch）|čaj|tea|拆读：č·a·j
+玻璃杯（č 硬 ch）|čaša|glass|拆读：č·a·š·a
+四（č 硬 ch）|četiri|four|拆读：č·e·t·i·r·i
+房子（ć 软 q）|kuća|house|拆读：k·u·ć·a
+女儿（ć 软 q）|ćerka|daughter|拆读：ć·e·r·k·a
+夜里（ć 软 q）|noć|night|拆读：n·o·ć
+口袋（dž 带声 zh）|džep|pocket|拆读：dž·e·p
+毛衣（dž 带声 zh）|džemper|sweater|拆读：dž·e·m·p·e·r
+学生（đ 软 j）|đak|pupil|拆读：đ·a·k
+生日（đ 软 j）|rođendan|birthday|拆读：r·o·đ·e·n·d·a·n
+领导（đ 软 j）|vođa|leader|拆读：v·o·đ·a
+六（š = sh）|šest|six|拆读：š·e·s·t
+七（s = s）|sedam|seven|拆读：s·e·d·a·m
+什么（š = sh）|šta|what|拆读：š·t·a
+小时；钟（s = s）|sat|hour; clock|拆读：s·a·t
+妻子（ž 带声）|žena|wife|拆读：ž·e·n·a
+冬天（z = z）|zima|winter|拆读：z·i·m·a
+黄色的（ž 带声）|žut|yellow|拆读：ž·u·t
+牙齿（z = z）|zub|tooth|拆读：z·u·b
+价格（c 永远读 ts）|cena|price|拆读：c·e·n·a
+街道（c 永远读 ts）|ulica|street|拆读：u·l·i·c·a
+鞋（c 永远读 ts）|cipele|shoes|拆读：c·i·p·e·l·e
+人们（lj 一个音）|ljudi|people|拆读：lj·u·d·i
+钥匙（lj 一个音）|ključ|key|拆读：k·lj·u·č
+医生（l 普通）|lekar|doctor|拆读：l·e·k·a·r
+书（nj 一个音）|knjiga|book|拆读：k·nj·i·g·a
+马（nj 一个音）|konj|horse|拆读：k·o·nj
+腿（n 普通）|noga|leg|拆读：n·o·g·a
+谢谢（h 喉音）|hvala|thank you|拆读：h·v·a·l·a
+冷（h 喉音）|hladno|cold|拆读：h·l·a·d·n·o
+食物（h 喉音）|hrana|food|拆读：h·r·a·n·a
+手指（r 当元音）|prst|finger|拆读：p·r·s·t
+心脏（r 当元音）|srce|heart|拆读：s·r·c·e
+黑色的（r 当元音）|crn|black|拆读：c·r·n
+广场（r 当元音）|trg|square|拆读：t·r·g
+星期四（r 当元音）|četvrtak|Thursday|拆读：č·e·t·v·r·t·a·k
+我（j = y）|ja|I|拆读：j·a
+昨天（j = y）|juče|yesterday|拆读：j·u·č·e
+酸奶（j = y）|jogurt|yogurt|拆读：j·o·g·u·r·t
+天气；时间（v 上齿碰下唇）|vreme|weather; time|拆读：v·r·e·m·e`},
 /* ================= 第一级 ================= */
 {id:"greet",lv:"L1",ic:"👋",t:"问候与礼貌",tip:"对陌生人、上级、长辈用“您”（Vi），对朋友、同事用“你”（ti）。Dobar dan 白天任何时候都能用，最安全。",d:`
 你好|Zdravo|Hello
@@ -1724,7 +1828,8 @@ function qzType(giveUp){
 
 /* 更多 */
 function moreTab(n){[1,2,3].forEach(i=>{document.getElementById("more"+i).style.display=i===n?"":"none";document.getElementById("m"+i).classList.toggle("on",i===n)});if(n===3)showVoiceInfo();if(n===1)updateStats()}
-function renderAbc(){document.getElementById("abcGrid").innerHTML=ABC.map(([l,c,p])=>`<div class="L" onclick="say(${js(l.split(" ")[1])},'sr')"><div class="a">${l}</div><div class="c">${c}</div><div class="p">${p}</div></div>`).join("")}
+const ABCN=["a","be","ce","če","će","de","dže","đe","e","ef","ge","ha","i","je","ka","el","elj","em","en","enj","o","pe","er","es","eš","te","u","ve","ze","že"];
+function renderAbc(){document.getElementById("abcGrid").innerHTML=ABC.map(([l,c,p],i)=>`<div class="L" onclick="say(${js(ABCN[i])},'sr')"><div class="a">${l}</div><div class="c">${c}</div><div class="p">${p}<br>读作 ${ABCN[i]}</div></div>`).join("")}
 function updateStats(){
   document.getElementById("sTotal").textContent=ALL.length;
   document.getElementById("sKnown").textContent=ALL.filter(x=>isKnown(x.id)).length;
