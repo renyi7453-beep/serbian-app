@@ -107,6 +107,13 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(12,64,118,.45)}70%{box-shadow:0 0 0 18px rgba(12,64,118,0)}100%{box-shadow:0 0 0 0 rgba(12,64,118,0)}}
 .score{display:inline-block;border-radius:999px;padding:4px 12px;font-weight:800;color:#fff}
 .score.good{background:var(--green)}.score.mid{background:var(--amber)}.score.low{background:var(--red)}
+.fix{margin-top:8px;border-top:1px dashed #e2c98f;padding-top:7px}
+.fix .fl{font-size:12px;font-weight:700;color:var(--amber)}
+.fix .fs{font-size:16px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+.fix .fe{font-size:13px;color:var(--ink);margin-top:3px;line-height:1.5}
+.aibar{display:flex;gap:8px}
+.aitype{display:flex;gap:8px;margin-top:12px}.aitype input{flex:1;min-width:0;padding:11px 12px;border:1px solid var(--line);border-radius:12px;font-size:15px}.aitype .btn{flex:none;padding:11px 16px}
+details summary{cursor:pointer}
 .w-ok{color:var(--green)}.w-mid{color:var(--amber)}.w-bad{color:var(--red);text-decoration:underline wavy}
 </style>
 </head>
@@ -172,13 +179,14 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
   </section>
 
   <section class="view" id="v-speak">
-    <div class="tabs2"><button class="on" id="k1" onclick="spTab(1)">💬 情景对话</button><button id="k2" onclick="spTab(2)">🔁 跟读打分</button></div>
+    <div class="tabs2"><button class="on" id="k1" onclick="spTab(1)">💬 情景对话</button><button id="k2" onclick="spTab(2)">🔁 跟读打分</button><button id="k3" onclick="spTab(3)">🤖 自由对话</button></div>
     <div id="sp1"></div>
     <div id="sp2" style="display:none">
       <select id="spCat" onchange="rpStart()"></select>
       <div class="meta" style="margin-top:10px"><span id="rpInfo"></span><span id="rpNum"></span></div>
       <div id="rpBox"></div>
     </div>
+    <div id="sp3" style="display:none"></div>
   </section>
 
   <section class="view" id="v-more">
@@ -221,6 +229,7 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
       <div class="box"><b>🎤 口语对练</b><br>
         「情景对话」：对方用塞语说一句，你按 🎤 用塞语回答，说对了自动进入下一句。<br>
         「跟读打分」：听一句，跟着读，手机给你打分，并把没读准的词标成红色。<br>
+        「自由对话」：AI 扮演塞尔维亚人 Marko 跟你随便聊，说错了会给出更好的说法和中文解释。需要一个免费的 Google AI 密钥（按页面上的步骤申请），必须联网。<br>
         语音识别用的是手机自带的 Google 识别服务，<b>一般需要联网</b>（其他功能仍然离线可用）。第一次使用会请求麦克风权限，请点「允许」。
       </div>
       <div id="voiceInfo" class="box"></div>
@@ -2059,14 +2068,138 @@ function rpListen(){listen(texts=>{const x=rp.list[rp.i],b=bestMatch(x.sr.split(
 function rpNext(){cancelListen();rp.i++;rpShow()}
 
 /* 口语页：标签切换与设置 */
-function spTab(n){cancelListen();[1,2].forEach(i=>{document.getElementById("sp"+i).style.display=i===n?"":"none";document.getElementById("k"+i).classList.toggle("on",i===n)});
-  store.set("spTab",n);if(n===1&&!dlg.sc)renderScenes();if(n===2&&!rp.list.length)rpStart()}
+function spTab(n){cancelListen();[1,2,3].forEach(i=>{document.getElementById("sp"+i).style.display=i===n?"":"none";document.getElementById("k"+i).classList.toggle("on",i===n)});
+  store.set("spTab",n);if(n===1&&!dlg.sc)renderScenes();if(n===2&&!rp.list.length)rpStart();if(n===3)aiRender()}
 function speakSettings(){const L=recLang();
   return `<div class="box" style="margin-top:14px"><b>🎤 语音识别设置</b><br>
    识别状态：${canListen()?"✅ 可以使用":"❌ 这台设备不能语音识别（安卓手机请安装/更新「Google」App）"}<br>
    识别语言：<select style="width:auto;display:inline-block;padding:5px 8px" onchange="store.set('recLang',this.value);toast('已切换')">
      ${[["sr-RS","塞尔维亚语（推荐）"],["hr-HR","克罗地亚语（塞语不能用时选）"],["bs-BA","波斯尼亚语"]].map(([v,n])=>`<option value="${v}"${v===L?" selected":""}>${n}</option>`).join("")}</select>
    <div style="font-size:12px;color:var(--muted);margin-top:6px">语音识别用的是手机自带的 Google 识别服务，一般需要联网。第一次使用会请求麦克风权限，请点「允许」。塞语和克罗地亚语几乎一样，塞语识别不了就换克罗地亚语。</div></div>`}
+
+/* ================= 自由对话（Gemini AI，需要联网） ================= */
+const AI_MODELS=["gemini-flash-latest","gemini-3.5-flash","gemini-2.5-flash","gemini-flash-lite-latest"];
+const AI_TOPICS=[["free","💬 随便聊"],["intro","👋 自我介绍、认识新朋友"],["work","🏭 工厂上班、同事和工作"],["food","🍽️ 点餐、吃饭、做饭"],["shop","🛒 超市购物、买东西"],["town","🚌 坐车、问路、沙巴茨城里"],["home","🏠 租房、住的地方"],["doctor","🏥 身体不舒服、看医生"],["weekend","☕ 周末、爱好、天气"]];
+const AI_TOPIC_EN={free:"anything the learner wants; suggest everyday topics",intro:"getting to know each other: name, country, family, how long in Serbia",
+  work:"work at the car-parts factory: shifts, the production line, colleagues, breaks, the boss",food:"food: ordering in a cafe or restaurant, favourite dishes, cooking",
+  shop:"shopping at the supermarket or market: prices, quantities, paying",town:"getting around Šabac: bus, directions, places in town",
+  home:"renting a flat: rooms, rent, bills, the landlord, neighbours",doctor:"health: feeling unwell, pharmacy, visiting a doctor",weekend:"free time: weekend plans, hobbies, weather, sport"};
+const AI_LEVELS=[["a1","初学（短句、简单词）"],["a2","进阶（稍长一点的句子）"]];
+let ai={hist:[],busy:false,showZh:store.get("aiZh",true),wantHint:false};
+const aiKey=()=>store.get("aiKey","");
+
+let httpSeq=0;const HTTP={};
+window.onHttp=function(id,code,text){const cb=HTTP[id];delete HTTP[id];if(cb)cb(code,text)};
+function httpPost(url,headers,body){return new Promise(res=>{
+  if(NATIVE&&typeof AndroidTTS.post==="function"){const id="h"+(++httpSeq);HTTP[id]=(c,t)=>res({code:c,text:t});
+    try{AndroidTTS.post(id,url,JSON.stringify(headers),body)}catch(e){delete HTTP[id];res({code:-1,text:String(e)})}return}
+  fetch(url,{method:"POST",headers,body}).then(r=>r.text().then(t=>res({code:r.status,text:t}))).catch(e=>res({code:-1,text:String(e)}))})}
+
+function aiSys(){const lv=store.get("aiLevel","a1"),tp=store.get("aiTopic","free");
+  return `You are Marko, a friendly Serbian man from Šabac. You are chatting with a Chinese learner of Serbian who now lives in Šabac, Serbia and works at the Minth car-parts factory. Conversation topic: ${AI_TOPIC_EN[tp]||AI_TOPIC_EN.free}.
+Learner level: ${lv==="a1"?"absolute beginner (A1). Use very short, simple sentences (max about 10 words each), only very common words, mostly present tense":"elementary (A2). Use short everyday sentences, common words, present, past and future tense are fine"}.
+Rules:
+1. "reply" must be ONLY in Serbian, ekavian, Latin script, 1-2 sentences, friendly and natural. Usually end with ONE simple question so the conversation continues. Stay on the topic but follow the learner if they change it.
+2. Check the learner's LAST message for real mistakes in Serbian: grammar, case endings, verb forms, gender/number agreement, wrong word, word order.
+   The text comes from speech recognition, so IGNORE missing diacritics (c/č/ć, s/š, z/ž, dj/đ), capitalization, punctuation and small recognition glitches. Do not "correct" correct sentences or acceptable alternatives.
+3. If the learner wrote Chinese or English (or mixed), they don't know how to say it in Serbian: set ok=false, put the natural Serbian sentence in "fixed" and explain briefly in Chinese.
+4. If the learner's message is exactly [START], set ok=true and open the conversation: greet and ask a first simple question about the topic.
+5. Explanations ("explain", "*_zh") are in simple Simplified Chinese. Keep "explain" to one or two short sentences, name the rule (e.g. 第四格/宾格, 动词变位, 阴性/阳性).
+Return ONLY a JSON object, no markdown:
+{"ok": true or false, "fixed": "corrected, natural Serbian version of the learner's whole message (empty string if ok)", "explain": "中文：错在哪里、为什么（ok 时为空字符串）", "reply": "your Serbian reply", "reply_zh": "reply 的中文翻译", "suggest": "one natural Serbian sentence the learner could say next to answer you", "suggest_zh": "suggest 的中文翻译"}`}
+
+function aiParse(text){let d;try{d=JSON.parse(text)}catch(e){return null}
+  const parts=(((d.candidates||[])[0]||{}).content||{}).parts||[];let t=parts.filter(p=>!p.thought).map(p=>p.text||"").join("").trim();
+  if(!t)return null;t=t.replace(/^```(?:json)?\s*/i,"").replace(/```\s*$/,"").trim();
+  const a=t.indexOf("{"),b=t.lastIndexOf("}");if(a>=0&&b>a)t=t.slice(a,b+1);
+  try{const o=JSON.parse(t);if(!o.reply)return null;return o}catch(e){return {ok:true,reply:t,reply_zh:"",fixed:"",explain:"",suggest:"",suggest_zh:""}}}
+function aiErrMsg(r){
+  if(r.code===-1)return "连不上网络：请检查手机网络（自由对话需要联网）";
+  let m="";try{m=(JSON.parse(r.text).error||{}).message||""}catch(e){}
+  if(r.code===400&&/api key|API_KEY/i.test(m))return "API 密钥不对：请到下面「AI 设置」重新粘贴密钥";
+  if(r.code===403)return "密钥没有权限或被停用：请到 Google AI Studio 重新创建一个密钥";
+  if(r.code===429)return "免费次数暂时用完了（太快了或今天用满了）：等一两分钟再试，或者明天再来";
+  if(r.code>=500)return "Google 服务器忙，等一下再试";
+  return "出错了（"+r.code+"）"+(m?"："+m.slice(0,120):"");
+}
+async function aiCall(){
+  const key=aiKey(),saved=store.get("aiModelOk",""),custom=store.get("aiModel","").trim();
+  const models=[...new Set([custom,saved].filter(Boolean).concat(AI_MODELS))];
+  const contents=ai.hist.slice(-24).map(h=>({role:h.role,parts:[{text:h.text}]}));
+  const body=JSON.stringify({systemInstruction:{parts:[{text:aiSys()}]},contents,generationConfig:{responseMimeType:"application/json"}});
+  let last=null;
+  for(const m of models){
+    const r=await httpPost("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(m)+":generateContent",{"Content-Type":"application/json","x-goog-api-key":key},body);
+    last=r;
+    if(r.code===200){const o=aiParse(r.text);if(o){if(m!==saved)store.set("aiModelOk",m);return {o}}last={code:0,text:""};continue}
+    if(r.code===404||r.code===429||(r.code===400&&/model|not found|not supported/i.test(r.text)&&!/api key/i.test(r.text)))continue;
+    break;
+  }
+  return {err:last&&last.code===0?"AI 回复格式不对，请再说一次":aiErrMsg(last||{code:-1,text:""})};
+}
+async function aiSend(text){
+  text=(text||"").trim();if(!text||ai.busy)return;
+  if(!aiKey()){toast("请先在下面填写 API 密钥");return}
+  ai.busy=true;ai.wantHint=false;ai.err="";
+  if(text!=="[START]")ai.hist.push({role:"user",text,show:text});else ai.hist.push({role:"user",text,hidden:true});
+  aiRender();
+  const r=await aiCall();ai.busy=false;
+  if(r.err){const u=ai.hist.pop();ai.err=r.err;aiRender();if(u&&!u.hidden){const i=document.getElementById("aiText");if(i)i.value=u.text}return}
+  const o=r.o,u=ai.hist[ai.hist.length-1];
+  if(!u.hidden){u.ok=o.ok!==false||!o.fixed;u.fixed=o.fixed||"";u.explain=o.explain||""}
+  ai.hist.push({role:"model",text:JSON.stringify(o),o});
+  aiRender();say(o.reply,"sr");
+}
+function setHeard2(t){const el=document.getElementById("aiHeard");if(el)el.innerHTML=t}
+function aiNew(){cancelListen();ai.hist=[];ai.busy=false;aiSend("[START]")}
+function aiRender(){
+  const box=document.getElementById("sp3");
+  if(!aiKey()){box.innerHTML=aiSetup(true);return}
+  const lv=store.get("aiLevel","a1"),tp=store.get("aiTopic","free");
+  const last=[...ai.hist].reverse().find(h=>h.role==="model");
+  const chat=ai.hist.filter(h=>!h.hidden).map(h=>{
+    if(h.role==="model"){const o=h.o;return `<div class="bub app"><div class="who">🇷🇸 Marko</div><div class="s">${esc(sr(o.reply))} <button class="spk sm" onclick="say(${js(o.reply)},'sr')">🔊</button></div>
+      ${o.reply_zh?(ai.showZh?`<div class="z">${esc(o.reply_zh)}</div>`:`<div class="z" style="cursor:pointer" onclick="this.textContent=${js(o.reply_zh)}">👀 点这里看中文</div>`):""}</div>`}
+    const fix=h.ok===false&&h.fixed;
+    return `<div class="bub me ${h.ok===undefined?"":fix?"mid":"good"}"><div class="who">🙋 你说的${h.ok===undefined?"":fix?" · 有地方可以改":" · ✅ 说得对"}</div><div class="s">${esc(sr(h.show))}</div>
+      ${fix?`<div class="fix"><div class="fl">✏️ 更好的说法</div><div class="fs">${esc(sr(h.fixed))} <button class="spk sm" onclick="say(${js(h.fixed)},'sr')">🔊</button></div>${h.explain?`<div class="fe">${esc(h.explain)}</div>`:""}</div>`:""}</div>`}).join("");
+  box.innerHTML=`<div class="aibar"><select onchange="store.set('aiTopic',this.value)">${AI_TOPICS.map(([v,n])=>`<option value="${v}"${v===tp?" selected":""}>${n}</option>`).join("")}</select>
+     <select onchange="store.set('aiLevel',this.value)" style="width:auto">${AI_LEVELS.map(([v,n])=>`<option value="${v}"${v===lv?" selected":""}>${n}</option>`).join("")}</select></div>
+   <div class="row" style="margin-top:8px"><button class="btn${ai.hist.length?" ghost":""}" onclick="aiNew()">${ai.hist.length?"🔄 换话题 / 重新开始":"▶️ 开始对话"}</button></div>
+   ${ai.hist.length?"":`<div class="tip" style="margin-top:12px"><b>🤖 怎么练</b><br>选好话题和难度，点「开始对话」。AI 扮演塞尔维亚人 Marko 跟你聊天，你按 🎤 用塞语回答（也可以打字）。<br>说错了它会告诉你<b>更好的说法</b>和<b>错在哪里</b>；不知道怎么说，就点「💡 我该怎么说」，或者直接打中文，它会教你塞语怎么说。</div>`}
+   ${ai.err?`<div class="tip" style="margin-top:12px;background:#fbeeee;border-color:#efc4c6">⚠️ ${esc(ai.err)}</div>`:""}
+   <div class="chat" style="margin-top:12px">${chat}${ai.busy?`<div class="bub app"><div class="who">🇷🇸 Marko</div><div class="z">正在输入… ⏳</div></div>`:""}</div>
+   ${last?`<div class="panel">
+     ${ai.wantHint&&last.o.suggest?`<div class="hints"><div class="hint1"><span>${esc(sr(last.o.suggest))}</span><button class="spk sm" onclick="say(${js(last.o.suggest)},'sr')">🔊</button></div><div class="z" style="font-size:13px;color:var(--muted);margin:-2px 0 4px 4px">${esc(last.o.suggest_zh||"")}</div></div>`:""}
+     <div class="heard" id="aiHeard">${ai.busy?"":"点 🎤 用塞尔维亚语回答"}</div>
+     ${micBtn("aiListen()")}
+     <div class="aitype"><input id="aiText" placeholder="也可以打字（塞语或中文）…" onkeydown="if(event.key==='Enter')aiTyped()"><button class="btn" onclick="aiTyped()">发送</button></div>
+     <div class="row" style="margin-top:10px">
+       <button class="btn ghost" onclick="say(${js(last.o.reply)},'sr')">🔊 再听</button>
+       ${ai.wantHint?"":`<button class="btn ghost" onclick="ai.wantHint=true;aiRender()">💡 我该怎么说</button>`}
+       <button class="btn ghost" onclick="ai.showZh=!ai.showZh;store.set('aiZh',ai.showZh);aiRender()">${ai.showZh?"隐藏中文":"显示中文"}</button></div></div>`:""}
+   ${aiSetup(false)}`;
+  const c=document.querySelector("#sp3 .chat");if(c&&c.lastElementChild&&ai.hist.length>1)c.lastElementChild.scrollIntoView({block:"nearest"});
+}
+function aiListen(){if(ai.busy)return;listen(texts=>{setHeard2("");aiSend(texts[0])},"aiHeard")}
+function aiTyped(){const i=document.getElementById("aiText");if(!i)return;const v=i.value;i.value="";aiSend(v)}
+function aiSetup(first){const k=aiKey();
+  if(!first)return `<details class="box" style="margin-top:14px"><summary><b>⚙️ AI 设置</b>（密钥已保存：…${esc(k.slice(-4))}）</summary>
+    <div style="margin-top:8px">${aiKeyForm()}<div style="font-size:12px;color:var(--muted);margin-top:8px">模型（一般不用改，留空自动选）：</div>
+    <input class="search" style="margin-top:4px" placeholder="例如 gemini-flash-latest" value="${esc(store.get("aiModel",""))}" onchange="store.set('aiModel',this.value.trim());store.set('aiModelOk','')">
+    <div class="row"><button class="btn ghost" onclick="aiDelKey()">删除密钥</button></div></div></details>`+speakSettings();
+  return `<div class="tip"><b>🤖 自由对话需要一个免费的 Google AI 密钥（只要设置一次）</b><br>
+    1. 用手机浏览器打开 <b>aistudio.google.com/apikey</b>，用你的 Google 账号登录，同意条款。<br>
+    2. 点「<b>Create API key</b>」（创建 API 密钥），然后点复制。<br>
+    3. 回到这里，粘贴到下面的框里，点「保存」。<br>
+    <span style="font-size:12px;color:var(--muted)">免费使用，不用绑银行卡。免费版每分钟、每天的次数有限，用完了等一会儿或第二天再练。密钥只保存在你自己的手机里，不要发给别人。</span></div>
+    <div class="box">${aiKeyForm()}</div>`+speakSettings()}
+function aiKeyForm(){return `<input class="search" id="aiKeyIn" type="password" autocomplete="off" placeholder="粘贴 API 密钥（一般以 AIza 开头）">
+  <div class="row"><button class="btn" onclick="aiSaveKey()">保存</button></div>`}
+function aiDelKey(){if(!aiDelKey.a){aiDelKey.a=1;toast("再点一次确认删除密钥");setTimeout(()=>aiDelKey.a=0,3000);return}
+  aiDelKey.a=0;store.set("aiKey","");store.set("aiModelOk","");ai.hist=[];aiRender();toast("已删除")}
+function aiSaveKey(){const v=(document.getElementById("aiKeyIn").value||"").trim();if(v.length<20){toast("密钥好像不完整，请重新复制粘贴");return}
+  store.set("aiKey",v);store.set("aiModelOk","");toast("已保存");ai.hist=[];aiRender()}
 
 /* 更多 */
 function moreTab(n){[1,2,3].forEach(i=>{document.getElementById("more"+i).style.display=i===n?"":"none";document.getElementById("m"+i).classList.toggle("on",i===n)});if(n===3)showVoiceInfo();if(n===1)updateStats()}
@@ -2090,7 +2223,7 @@ function syncPills(){document.getElementById("tLat").classList.toggle("on",scrip
 let curView="course";
 function rerender(){if(curView==="unit"&&curUnit)openUnit(curUnit,true);else{renderCourse();renderFactory();doSearch()}
   if(fc.list.length)fcShow();if(qz.list.length&&!qz.done)qzShow();
-  if(curView==="speak"){if(dlg.sc&&!REC.on)dlgRender();else if(!dlg.sc)renderScenes();if(rp.list.length&&!rp.done&&!REC.on)rpShow()}}
+  if(curView==="speak"){if(dlg.sc&&!REC.on)dlgRender();else if(!dlg.sc)renderScenes();if(rp.list.length&&!rp.done&&!REC.on)rpShow();if(!REC.on&&!ai.busy)aiRender()}}
 function show(v,navAs){if(v!==curView)cancelListen();curView=v;
   document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   const nv=navAs||v;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
