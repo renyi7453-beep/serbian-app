@@ -108,7 +108,8 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
 .score{display:inline-block;border-radius:999px;padding:4px 12px;font-weight:800;color:#fff}
 .score.good{background:var(--green)}.score.mid{background:var(--amber)}.score.low{background:var(--red)}
 .fix{margin-top:8px;border-top:1px dashed #e2c98f;padding-top:7px}
-.fix .fl{font-size:12px;font-weight:700;color:var(--amber)}
+.fix .fl{font-size:12px;font-weight:700;color:var(--amber);margin-top:6px}
+.fix .fv{font-size:14px;font-weight:700;color:var(--ink)}
 .fix .fs{font-size:16px;font-weight:700;color:var(--green);display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
 .fix .fe{font-size:13px;color:var(--ink);margin-top:3px;line-height:1.5}
 .aibar{display:flex;gap:8px}
@@ -2104,9 +2105,13 @@ Rules:
    The text comes from speech recognition, so IGNORE missing diacritics (c/č/ć, s/š, z/ž, dj/đ), capitalization, punctuation and small recognition glitches. Do not "correct" correct sentences or acceptable alternatives.
 3. If the learner wrote Chinese or English (or mixed), they don't know how to say it in Serbian: set ok=false, put the natural Serbian sentence in "fixed" and explain briefly in Chinese.
 4. If the learner's message is exactly [START], set ok=true and open the conversation: greet and ask a first simple question about the topic.
-5. Explanations ("explain", "*_zh") are in simple Simplified Chinese. Keep "explain" to one or two short sentences, name the rule (e.g. 第四格/宾格, 动词变位, 阴性/阳性).
+5. LANGUAGE RULE (very important): the learner only reads Chinese. Every explanation field — "verdict", "explain", "tip", "reply_zh", "suggest_zh" — MUST be written in Simplified Chinese (简体中文). Never write explanations in English or Serbian; Serbian words may appear inside the Chinese text only as quoted examples.
+6. "verdict": one short Chinese sentence judging the learner's last message, e.g. "完全正确！" / "意思对了，但有一个语法错误。" / "这句话不太对。" (for [START] use "").
+7. "explain": in Chinese. If wrong: point out each mistake as「错的词 → 对的词」and say why, naming the rule in Chinese (第几格/格变化、动词变位、阴性/阳性/中性、单复数、词序、用词). If correct: briefly say what was done well. Max 3 short sentences.
+8. "tip": 中文延伸：one useful related point — a synonym, another way to say it, a related phrase, or the grammar pattern — with 1-2 Serbian examples each followed by its Chinese meaning in brackets. Max 2 short sentences. (for [START]: a tip about the opening greeting).
+中文提示：除了 reply、fixed、suggest 这三个塞尔维亚语字段，其他所有字段必须用简体中文写。
 Return ONLY a JSON object, no markdown:
-{"ok": true or false, "fixed": "corrected, natural Serbian version of the learner's whole message (empty string if ok)", "explain": "中文：错在哪里、为什么（ok 时为空字符串）", "reply": "your Serbian reply", "reply_zh": "reply 的中文翻译", "suggest": "one natural Serbian sentence the learner could say next to answer you", "suggest_zh": "suggest 的中文翻译"}`}
+{"ok": true or false, "verdict": "中文对错判断", "fixed": "corrected, natural Serbian version of the learner's whole message (empty string if ok)", "explain": "中文：错在哪里、为什么 / 说得好在哪里", "tip": "中文延伸知识，附塞语例句和中文意思", "reply": "your Serbian reply", "reply_zh": "reply 的中文翻译", "suggest": "one natural Serbian sentence the learner could say next to answer you", "suggest_zh": "suggest 的中文翻译"}`}
 
 function aiParse(text){let d;try{d=JSON.parse(text)}catch(e){return null}
   const parts=(((d.candidates||[])[0]||{}).content||{}).parts||[];let t=parts.filter(p=>!p.thought).map(p=>p.text||"").join("").trim();
@@ -2147,7 +2152,7 @@ async function aiSend(text){
   const r=await aiCall();ai.busy=false;
   if(r.err){const u=ai.hist.pop();ai.err=r.err;aiRender();if(u&&!u.hidden){const i=document.getElementById("aiText");if(i)i.value=u.text}return}
   const o=r.o,u=ai.hist[ai.hist.length-1];
-  if(!u.hidden){u.ok=o.ok!==false||!o.fixed;u.fixed=o.fixed||"";u.explain=o.explain||""}
+  if(!u.hidden){u.ok=o.ok!==false||!o.fixed;u.fixed=o.fixed||"";u.explain=o.explain||"";u.verdict=o.verdict||"";u.tip=o.tip||""}
   ai.hist.push({role:"model",text:JSON.stringify(o),o});
   aiRender();say(o.reply,"sr");
 }
@@ -2162,8 +2167,11 @@ function aiRender(){
     if(h.role==="model"){const o=h.o;return `<div class="bub app"><div class="who">🇷🇸 Marko</div><div class="s">${esc(sr(o.reply))} <button class="spk sm" onclick="say(${js(o.reply)},'sr')">🔊</button></div>
       ${o.reply_zh?(ai.showZh?`<div class="z">${esc(o.reply_zh)}</div>`:`<div class="z" style="cursor:pointer" onclick="this.textContent=${js(o.reply_zh)}">👀 点这里看中文</div>`):""}</div>`}
     const fix=h.ok===false&&h.fixed;
-    return `<div class="bub me ${h.ok===undefined?"":fix?"mid":"good"}"><div class="who">🙋 你说的${h.ok===undefined?"":fix?" · 有地方可以改":" · ✅ 说得对"}</div><div class="s">${esc(sr(h.show))}</div>
-      ${fix?`<div class="fix"><div class="fl">✏️ 更好的说法</div><div class="fs">${esc(sr(h.fixed))} <button class="spk sm" onclick="say(${js(h.fixed)},'sr')">🔊</button></div>${h.explain?`<div class="fe">${esc(h.explain)}</div>`:""}</div>`:""}</div>`}).join("");
+    return `<div class="bub me ${h.ok===undefined?"":fix?"mid":"good"}"><div class="who">🙋 你说的</div><div class="s">${esc(sr(h.show))}</div>
+      ${h.ok===undefined?"":`<div class="fix"><div class="fv">${fix?"❌":"✅"} ${esc(h.verdict||(fix?"有地方需要改":"说得对！"))}</div>
+        ${fix?`<div class="fl">✏️ 正确说法</div><div class="fs">${esc(sr(h.fixed))} <button class="spk sm" onclick="say(${js(h.fixed)},'sr')">🔊</button></div>`:""}
+        ${h.explain?`<div class="fl">${fix?"📖 错在哪里":"👍 好在哪里"}</div><div class="fe">${esc(h.explain)}</div>`:""}
+        ${h.tip?`<div class="fl">💡 延伸学习</div><div class="fe">${esc(h.tip)}</div>`:""}</div>`}</div>`}).join("");
   box.innerHTML=`<div class="aibar"><select onchange="store.set('aiTopic',this.value)">${AI_TOPICS.map(([v,n])=>`<option value="${v}"${v===tp?" selected":""}>${n}</option>`).join("")}</select>
      <select onchange="store.set('aiLevel',this.value)" style="width:auto">${AI_LEVELS.map(([v,n])=>`<option value="${v}"${v===lv?" selected":""}>${n}</option>`).join("")}</select></div>
    <div class="row" style="margin-top:8px"><button class="btn${ai.hist.length?" ghost":""}" onclick="aiNew()">${ai.hist.length?"🔄 换话题 / 重新开始":"▶️ 开始对话"}</button></div>
