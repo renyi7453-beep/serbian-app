@@ -85,6 +85,29 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
 .tabs2{display:flex;gap:6px;margin-bottom:12px}
 .tabs2 button{flex:1;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px;font-size:14px;cursor:pointer;color:var(--ink)}
 .tabs2 button.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:700}
+/* 口语对练 */
+.chat{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.bub{max-width:88%;border-radius:16px;padding:10px 12px;border:1px solid var(--line);background:#fff}
+.bub.app{align-self:flex-start;border-top-left-radius:4px}
+.bub.me{align-self:flex-end;border-top-right-radius:4px;background:#eef3f9}
+.bub.me.good{background:#ecf7f0;border-color:#bfe3cc}.bub.me.mid{background:#fff8e6;border-color:#f1dfb0}.bub.me.low{background:#fbeeee;border-color:#efc4c6}
+.bub .who{font-size:11px;color:var(--muted);margin-bottom:3px}
+.bub .s{font-size:17px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.bub .z{font-size:13px;color:var(--muted);margin-top:3px}
+.spk.sm{width:30px;height:30px;font-size:13px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;text-align:center}
+.panel .lab{font-size:14px;font-weight:700;color:var(--ink);text-align:left}
+.hints{margin-top:10px;text-align:left}
+.hint1{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--soft);border-radius:10px;padding:7px 10px;margin-bottom:6px;font-weight:700;color:var(--blue)}
+.heard{min-height:24px;margin:12px 0 4px;font-size:14px;line-height:1.55;color:var(--ink)}
+.listening{color:var(--red);font-weight:700}
+.mic{border:0;background:var(--red);color:#fff;width:92px;height:92px;border-radius:50%;cursor:pointer;margin:6px auto 0;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(198,54,60,.3)}
+.mic b{font-size:34px;line-height:1;font-weight:400}.mic span{font-size:11px;margin-top:4px}
+.mic.on{background:var(--blue);animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(12,64,118,.45)}70%{box-shadow:0 0 0 18px rgba(12,64,118,0)}100%{box-shadow:0 0 0 0 rgba(12,64,118,0)}}
+.score{display:inline-block;border-radius:999px;padding:4px 12px;font-weight:800;color:#fff}
+.score.good{background:var(--green)}.score.mid{background:var(--amber)}.score.low{background:var(--red)}
+.w-ok{color:var(--green)}.w-mid{color:var(--amber)}.w-bad{color:var(--red);text-decoration:underline wavy}
 </style>
 </head>
 <body>
@@ -148,6 +171,16 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
     <div id="qzBox"></div>
   </section>
 
+  <section class="view" id="v-speak">
+    <div class="tabs2"><button class="on" id="k1" onclick="spTab(1)">💬 情景对话</button><button id="k2" onclick="spTab(2)">🔁 跟读打分</button></div>
+    <div id="sp1"></div>
+    <div id="sp2" style="display:none">
+      <select id="spCat" onchange="rpStart()"></select>
+      <div class="meta" style="margin-top:10px"><span id="rpInfo"></span><span id="rpNum"></span></div>
+      <div id="rpBox"></div>
+    </div>
+  </section>
+
   <section class="view" id="v-more">
     <div class="tabs2"><button class="on" id="m1" onclick="moreTab(1)">📈 进度</button><button id="m2" onclick="moreTab(2)">🔤 字母发音</button><button id="m3" onclick="moreTab(3)">ℹ️ 说明</button></div>
     <div id="more1">
@@ -185,6 +218,11 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
         所有内容都在应用里，不需要网络。学习进度保存在本机：安装新版本会保留进度；卸载应用或换手机会丢失。<br>
         <b>发音</b>用的是手机自带的语音。如果点 🔊 没声音：手机设置 → 文字转语音（TTS）→ 下载「塞尔维亚语」或「克罗地亚语」语音包（两者发音几乎一样）。
       </div>
+      <div class="box"><b>🎤 口语对练</b><br>
+        「情景对话」：对方用塞语说一句，你按 🎤 用塞语回答，说对了自动进入下一句。<br>
+        「跟读打分」：听一句，跟着读，手机给你打分，并把没读准的词标成红色。<br>
+        语音识别用的是手机自带的 Google 识别服务，<b>一般需要联网</b>（其他功能仍然离线可用）。第一次使用会请求麦克风权限，请点「允许」。
+      </div>
       <div id="voiceInfo" class="box"></div>
     </div>
   </section>
@@ -195,6 +233,7 @@ input.type{width:100%;padding:14px;font-size:18px;border-radius:14px;border:2px 
   <button data-v="factory"><b>🏭</b>工厂</button>
   <button data-v="cards"><b>🃏</b>闪卡</button>
   <button data-v="quiz"><b>✅</b>测验</button>
+  <button data-v="speak"><b>🎤</b>口语</button>
   <button data-v="more"><b>⋯</b>更多</button>
 </nav>
 <div class="toast" id="toast"></div>
@@ -1826,6 +1865,209 @@ function qzType(giveUp){
   say(x.sr,"sr");document.getElementById("tRow").innerHTML='<button class="btn" onclick="qzType()">下一题 ›</button>';
 }
 
+/* ================= 口语对练 ================= */
+/* 每行：对方说的塞语|中文意思|你可以回答的说法（用 / 分隔，* 表示随便说，比如你的名字）|回答的中文意思 */
+const SCENES=[
+{id:"s-intro",ic:"👋",t:"认识新同事",s:"自我介绍：名字、国家、工作",d:`
+Zdravo! Ja sam Marko. Kako se zoveš?|你好！我是马尔科。你叫什么名字？|Zovem se * / Ja sam *|我叫……（说你自己的名字）
+Drago mi je! Odakle si?|很高兴认识你！你是哪里人？|Ja sam iz Kine / Iz Kine sam|我来自中国。
+Koliko dugo si u Srbiji?|你来塞尔维亚多久了？|Ovde sam dva meseca / U Srbiji sam dva meseca|我在这儿两个月了。（可以换成你自己的时间）
+Gde radiš?|你在哪里工作？|Radim u fabrici Minth / Radim u fabrici|我在敏实工厂上班。
+Da li govoriš srpski?|你会说塞尔维亚语吗？|Govorim malo srpski / Malo govorim srpski|我会说一点塞尔维亚语。
+Bravo! Vidimo se sutra.|真棒！明天见。|Vidimo se sutra / Ćao, vidimo se|明天见！`},
+{id:"s-cafe",ic:"☕",t:"咖啡馆点单",s:"点饮料、点吃的、付钱",d:`
+Dobar dan! Izvolite, šta želite?|您好！请问要点什么？|Jednu kafu, molim / Želim jednu kafu|请给我一杯咖啡。
+Sa mlekom ili bez mleka?|加奶还是不加奶？|Sa mlekom, molim / Bez mleka, molim|加奶，谢谢。／不加奶，谢谢。
+Želite li nešto za jelo?|要吃点什么吗？|Jedan sendvič, molim / Ne, hvala|一个三明治，谢谢。／不用了，谢谢。
+Još nešto?|还要别的吗？|To je sve, hvala / Ne, to je sve|就这些，谢谢。
+To je četiristo dinara.|一共四百第纳尔。|Mogu li da platim karticom? / Izvolite|可以刷卡吗？／给您。
+Naravno. Prijatno!|当然可以。祝您用餐愉快！|Hvala, prijatno / Hvala|谢谢！`},
+{id:"s-market",ic:"🛒",t:"超市购物",s:"找东西、要袋子、结账",d:`
+Dobar dan! Mogu li da vam pomognem?|您好！需要帮忙吗？|Da, molim. Gde je hleb? / Gde je hleb?|是的，请问面包在哪里？
+Hleb je tamo, levo.|面包在那边，左边。|Hvala! A gde je mleko? / Gde je mleko?|谢谢！那牛奶在哪里？
+Mleko je desno, pored jaja.|牛奶在右边，鸡蛋旁边。|Hvala vam / Hvala puno|谢谢您。
+Da li vam treba kesa?|（收银台）您需要袋子吗？|Da, jednu kesu, molim / Ne treba, hvala|要一个袋子。／不用了，谢谢。
+Ukupno je osamsto pedeset dinara.|一共八百五十第纳尔。|Izvolite / Mogu li karticom?|给您。／可以刷卡吗？
+Hvala, prijatan dan!|谢谢，祝您愉快！|Hvala, takođe / Hvala, doviđenja|谢谢，您也是！／再见！`},
+{id:"s-factory",ic:"🏭",t:"工厂上班",s:"听班长安排、问怎么做、报告故障",d:`
+Dobro jutro! Jesi li spreman?|早上好！准备好了吗？|Dobro jutro, spreman sam / Da, spreman sam|早上好，我准备好了。
+Danas radiš na liniji dva.|今天你在二号线干活。|U redu. Šta treba da radim? / Šta treba da radim?|好的。我需要做什么？
+Proveri delove i odvoji škart.|检查零件，把废品挑出来。|Razumem. Gde da stavim škart? / Gde da stavim škart?|明白。废品放哪里？
+Stavi škart u crvenu kutiju.|废品放进红色箱子里。|U redu, razumem / Razumem|好的，明白了。
+Zašto mašina ne radi?|机器为什么不转了？|Ne znam, mašina je stala / Mašina je stala|我不知道，机器停了。
+Dobro, zvaću tehničara. Pauza je u deset.|好，我去叫技术员。十点休息。|Hvala, šefe / Hvala|谢谢领导。`},
+{id:"s-bus",ic:"🚌",t:"问路坐车",s:"问车站、问坐几路车、问票价",d:`
+Izvinite, da li vam treba pomoć?|不好意思，您需要帮忙吗？|Da, molim. Gde je autobuska stanica? / Gde je autobuska stanica?|是的，请问汽车站在哪里？
+Idite pravo, pa desno. Oko pet minuta.|一直走，然后右转，大约五分钟。|Hvala! Koji autobus ide do centra? / Koji autobus ide do centra?|谢谢！哪路车去市中心？
+Autobus broj tri.|三路车。|Koliko košta karta?|车票多少钱？
+Karta košta sto dinara.|车票一百第纳尔。|Hvala vam puno / Hvala puno|非常感谢！
+Nema na čemu. Srećno!|不客气，祝你顺利！|Doviđenja / Hvala, doviđenja|再见！`},
+{id:"s-doctor",ic:"🏥",t:"看医生",s:"说哪里疼、多久了、过敏、听医嘱",d:`
+Dobar dan. Šta vas boli?|您好，您哪里疼？|Boli me glava / Boli me stomak|我头疼。／我肚子疼。
+Od kada?|从什么时候开始的？|Od juče / Od jutros|从昨天开始。／从今天早上开始。
+Da li imate temperaturu?|您发烧吗？|Da, imam temperaturu / Nemam temperaturu|发烧。／不发烧。
+Da li ste alergični na neki lek?|您对什么药过敏吗？|Nisam alergičan / Ne, nisam|我不过敏。（女生说 alergična）
+Pijte ovaj lek tri puta dnevno.|这个药一天吃三次。|Razumem. Hvala, doktore / Razumem, hvala|明白了，谢谢医生。
+Ako ne bude bolje, dođite ponovo.|如果没好转，请再来。|U redu, doviđenja / Dobro, hvala|好的，再见！`},
+{id:"s-flat",ic:"🏠",t:"看房租房",s:"问房租、问水电费、决定租",d:`
+Dobar dan! Vi ste zbog stana?|您好！您是来看房的吗？|Da, ja sam zbog stana / Da, zbog stana|是的，我来看房。
+Stan ima dve sobe i kuhinju.|房子有两个房间和一个厨房。|Kolika je kirija? / Koliko je kirija?|房租多少钱？
+Kirija je dvesta evra mesečno.|房租每月两百欧元。|Da li su režije uključene?|水电费包含在内吗？
+Režije se plaćaju posebno.|水电费另付。|Mogu li da vidim kupatilo?|我可以看看卫生间吗？
+Naravno, izvolite.|当然，请看。|Sviđa mi se. Uzimam stan / Sviđa mi se|我很喜欢，这房子我租了。`},
+];
+SCENES.forEach(sc=>{sc.turns=sc.d.trim().split("\n").map(l=>{const p=l.split("|");
+  return {a:p[0].trim(),az:p[1].trim(),r:p[2].split("/").map(s=>s.trim()).filter(Boolean),rz:p[3].trim()}})});
+
+/* 西里尔 → 拉丁（识别结果常常是西里尔字母） */
+const C2L={"а":"a","б":"b","в":"v","г":"g","д":"d","ђ":"đ","е":"e","ж":"ž","з":"z","и":"i","ј":"j","к":"k","л":"l","љ":"lj","м":"m","н":"n","њ":"nj","о":"o","п":"p","р":"r","с":"s","т":"t","ћ":"ć","у":"u","ф":"f","х":"h","ц":"c","ч":"č","џ":"dž","ш":"š"};
+function toLat(s){return String(s||"").replace(/[Ѐ-ӿ]/g,ch=>{const lo=ch.toLowerCase(),m=C2L[lo];if(!m)return ch;return ch===lo?m:m.charAt(0).toUpperCase()+m.slice(1)})}
+
+/* 评分：按词比较，允许小的发音/拼写差别 */
+const NUMW={"0":"nula","1":"jedan","2":"dva","3":"tri","4":"cetiri","5":"pet","6":"sest","7":"sedam","8":"osam","9":"devet","10":"deset"};
+function toks(s){return loose(toLat(s).replace(/\*/g," ")).split(" ").filter(Boolean).map(w=>NUMW[w]||w)}
+function lev(a,b){const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=[...Array(n+1).keys()];
+  for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+function wsim(a,b){return 1-lev(a,b)/Math.max(a.length,b.length)}
+function bestSim(t,H){let b=0;H.forEach(h=>{const s=wsim(t,h);if(s>b)b=s});return b}
+function scoreOne(target,heard){const T=toks(target),H=toks(heard);if(!T.length)return 100;if(!H.length)return 0;
+  const sum=T.reduce((a,t)=>{const s=bestSim(t,H);return a+(s>=0.5?s:0)},0);return Math.round(100*sum/T.length)}
+function bestMatch(answers,heards){let best={pct:-1,ans:answers[0],heard:heards[0]||""};
+  answers.forEach(a=>heards.forEach(h=>{const p=scoreOne(a,h);if(p>best.pct)best={pct:p,ans:a,heard:h}}));return best}
+function colorize(target,heard){const H=toks(heard);
+  return target.split(/\s+/).map(w=>{const t=toks(w);if(!t.length)return esc(sr(w));const s=bestSim(t[0],H);
+    return `<span class="${s>=0.75?"w-ok":s>=0.5?"w-mid":"w-bad"}">${esc(sr(w))}</span>`}).join(" ")}
+const pctClass=p=>p>=80?"good":p>=60?"mid":"low";
+const pctWord=p=>p>=90?"太棒了！":p>=80?"很好！":p>=60?"差不多，再清楚一点":"再试一次";
+
+/* 录音识别：安卓用原生识别，电脑浏览器用 Web Speech */
+const REC={on:false,cb:null,el:null,web:null};
+const recLang=()=>store.get("recLang","sr-RS");
+function canListen(){if(NATIVE){try{return !!AndroidTTS.canListen()}catch(e){return false}}return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
+function setHeard(t){const el=document.getElementById(REC.el);if(el)el.innerHTML=t}
+function micUI(){document.querySelectorAll(".mic").forEach(b=>{b.classList.toggle("on",REC.on);b.querySelector("span").textContent=REC.on?"点我结束":"点我说话"})}
+function listen(cb,elId){
+  if(REC.on){stopListen();return}
+  REC.cb=cb;REC.el=elId;REC.on=true;micUI();setHeard("⏳ 准备中……");
+  if(NATIVE){try{AndroidTTS.listen(recLang())}catch(e){onSpeech({type:"error",code:-1})}return}
+  const R=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!R){onSpeech({type:"error",code:-1});return}
+  try{speechSynthesis.cancel()}catch(e){}
+  const r=new R();r.lang=recLang();r.interimResults=true;r.maxAlternatives=5;REC.web=r;
+  r.onstart=()=>onSpeech({type:"ready"});
+  r.onresult=e=>{const res=e.results[e.results.length-1];onSpeech({type:res.isFinal?"result":"partial",texts:Array.from(res).map(a=>a.transcript)})};
+  r.onerror=e=>onSpeech({type:"error",code:({"no-speech":6,"not-allowed":9,"service-not-allowed":9,"network":2,"language-not-supported":12,"aborted":5}[e.error])||7});
+  r.onend=()=>{if(REC.on)onSpeech({type:"error",code:7})};
+  try{r.start()}catch(e){onSpeech({type:"error",code:8})}
+}
+function stopListen(){if(!REC.on)return;if(NATIVE){try{AndroidTTS.stopListen()}catch(e){}}else if(REC.web){try{REC.web.stop()}catch(e){}}}
+function cancelListen(){if(!REC.on)return;REC.on=false;REC.cb=null;micUI();
+  if(NATIVE){try{AndroidTTS.stopListen()}catch(e){}}else if(REC.web){try{REC.web.abort()}catch(e){}}}
+const SPERR={1:"语音识别需要联网，请检查网络后再试",2:"语音识别需要联网，请检查网络后再试",3:"录音出错，请再试一次",4:"识别服务出错，请稍后再试",5:"已停止",
+  6:"没听到声音，点 🎤 再说一次",7:"没听清楚，请说慢一点、清楚一点再试",8:"识别器正忙，等两秒再试",
+  9:"没有麦克风权限：请到手机「设置 → 应用 → 塞英学习 → 权限」里允许使用麦克风",
+  11:"识别服务连接中断，请再试一次",12:"手机不支持这个识别语言，可在下面把识别语言换成「克罗地亚语」",13:"这个识别语言还没下载，可在下面换成「克罗地亚语」，或联网后再试",
+  "-1":"这台手机没有语音识别服务：请安装或更新「Google」App"};
+window.onSpeech=function(m){
+  if(!REC.on)return;
+  if(m.type==="ready"||m.type==="begin"){if(m.type==="ready")setHeard('<span class="listening">🎙️ 正在听……请说塞尔维亚语</span>');return}
+  if(m.type==="partial"){const t=m.texts&&m.texts[0];if(t)setHeard('<span class="listening">🎙️ '+esc(toLat(t))+'</span>');return}
+  if(m.type==="end"){setHeard("⏳ 识别中……");return}
+  REC.on=false;micUI();
+  if(m.type==="result"){const t=(m.texts||[]).map(toLat).filter(s=>s.trim());const cb=REC.cb;REC.cb=null;
+    if(!t.length){setHeard("😶 "+SPERR[7]);return}if(cb)cb(t);return}
+  const msg=SPERR[m.code]||("识别出错（代码 "+m.code+"），请再试一次");REC.cb=null;
+  setHeard(m.code===5?"":"⚠️ "+esc(msg));if(m.code!==5&&m.code!==6&&m.code!==7)toast(msg);
+};
+function micBtn(fn){return `<button class="mic" onclick="${fn}"><b>🎤</b><span>点我说话</span></button>`}
+
+/* 情景对话 */
+let dlg={sc:null,i:0,log:[],scores:[],tries:0,hint:false,busy:false};
+const spBest=()=>store.get("spBest",{});
+function renderScenes(){
+  const best=spBest();
+  document.getElementById("sp1").innerHTML=`<div class="tip"><b>💬 怎么练</b><br>对方先用塞尔维亚语说一句（会自动读出来），你按 🎤 用塞尔维亚语回答。说对了就进入下一句。不知道怎么说就点「💡 提示」。</div>`
+   +SCENES.map(sc=>`<button class="unit${(best[sc.id]||0)>=80?" done":""}" onclick="dlgStart('${sc.id}')"><div class="ic">${sc.ic}</div><div class="mid"><div class="t">${esc(sc.t)}</div>
+     <div class="n">${esc(sc.s)} · ${sc.turns.length} 轮${best[sc.id]!=null?` · 最好 ${best[sc.id]} 分`:""}</div></div><div style="font-size:20px;color:var(--muted)">›</div></button>`).join("")
+   +speakSettings();
+}
+function dlgStart(id){cancelListen();const sc=SCENES.find(s=>s.id===id);dlg={sc,i:0,log:[],scores:[],tries:0,hint:false,busy:false};dlgNext()}
+function dlgNext(){const t=dlg.sc.turns[dlg.i];dlg.tries=0;dlg.hint=false;dlg.busy=false;
+  if(!t){dlgDone();return}
+  dlg.log.push({who:"app",sr:t.a,zh:t.az});dlgRender();setTimeout(()=>say(t.a,"sr"),250)}
+function dlgRender(){
+  const t=dlg.sc.turns[dlg.i];
+  const chat=dlg.log.map(m=>m.who==="app"
+    ?`<div class="bub app"><div class="who">🇷🇸 对方</div><div class="s">${esc(sr(m.sr))} <button class="spk sm" onclick="say(${js(m.sr)},'sr')">🔊</button></div><div class="z">${esc(m.zh)}</div></div>`
+    :`<div class="bub me ${pctClass(m.pct)}"><div class="who">🙋 你说的 · <b>${m.pct} 分</b></div><div class="s">${esc(sr(m.heard))}</div>${m.pct<60?`<div class="z">参考说法：${esc(sr(m.ans.replace(/\*/g,"……")))}</div>`:""}</div>`).join("");
+  document.getElementById("sp1").innerHTML=`<button class="back" onclick="cancelListen();renderScenes()">‹ 返回情景列表</button>
+   <h2>${dlg.sc.ic} ${esc(dlg.sc.t)} <span style="font-size:13px;color:var(--muted);font-weight:400">第 ${Math.min(dlg.i+1,dlg.sc.turns.length)} / ${dlg.sc.turns.length} 轮</span></h2>
+   <div class="chat">${chat}</div>
+   ${t?`<div class="panel"><div class="lab">轮到你：用塞尔维亚语说「${esc(t.rz)}」</div>
+     ${dlg.hint?`<div class="hints">${t.r.map(a=>`<div class="hint1"><span>${esc(sr(a.replace(/\*/g,"……")))}</span><button class="spk sm" onclick="say(${js(a.replace(/\*/g," "))},'sr')">🔊</button></div>`).join("")}</div>`:""}
+     <div class="heard" id="dlgHeard">${dlg.tries?"":"准备好了就点 🎤"}</div>
+     ${micBtn("dlgListen()")}
+     <div class="row" style="margin-top:10px">
+       <button class="btn ghost" onclick="say(${js(t.a)},'sr')">🔊 再听一遍</button>
+       ${dlg.hint?"":`<button class="btn ghost" onclick="dlg.hint=true;dlgRender()">💡 提示</button>`}
+       ${dlg.tries?`<button class="btn ghost" onclick="dlgSkip()">跳过 ›</button>`:""}</div></div>`:""}`;
+  const c=document.querySelector("#sp1 .chat");if(c&&c.lastElementChild)c.lastElementChild.scrollIntoView({block:"nearest"});
+}
+function dlgListen(){if(dlg.busy)return;listen(texts=>{const t=dlg.sc.turns[dlg.i],b=bestMatch(t.r,texts);dlg.tries++;
+  dlg.log.push({who:"me",heard:b.heard,pct:b.pct,ans:b.ans});
+  if(b.pct>=60){dlg.scores.push(b.pct);dlg.busy=true;dlgRender();setHeard(`✅ ${pctWord(b.pct)} ${b.pct} 分`);setTimeout(()=>{dlg.i++;dlgNext()},1400)}
+  else{dlgRender();setHeard(`🔁 ${b.pct} 分，${dlg.tries>=2?"可以点「💡 提示」听听标准说法，或者跳过":"再说一次试试"}`);if(dlg.tries>=2&&!dlg.hint){dlg.hint=true;dlgRender();setHeard(`🔁 ${b.pct} 分，听听下面的说法再试`)}}
+},"dlgHeard")}
+function dlgSkip(){cancelListen();dlg.scores.push(0);dlg.i++;dlgNext()}
+function dlgDone(){
+  const avg=dlg.scores.length?Math.round(dlg.scores.reduce((a,b)=>a+b,0)/dlg.scores.length):0;
+  const best=spBest();if(best[dlg.sc.id]==null||avg>best[dlg.sc.id]){best[dlg.sc.id]=avg;store.set("spBest",best)}
+  dlgRender();
+  document.getElementById("sp1").insertAdjacentHTML("beforeend",`<div class="q" style="margin-top:12px"><div style="font-size:44px">${avg>=80?"🏆":avg>=60?"👍":"💪"}</div>
+   <div class="big">平均 ${avg} 分</div><div class="lab" style="margin-top:8px">${avg>=80?"对话很流利！换个情景继续练":avg>=60?"不错！再练一遍会更顺":"多点「提示」跟读几遍，再来一次"}</div></div>
+   <div class="row"><button class="btn ghost" onclick="renderScenes()">换个情景</button><button class="btn" onclick="dlgStart('${dlg.sc.id}')">再练一遍</button></div>`);
+  window.scrollTo(0,document.body.scrollHeight);
+}
+
+/* 跟读打分 */
+let rp={list:[],i:0,done:false};
+function rpStart(){cancelListen();const sel=document.getElementById("spCat").value;let items=pool(sel);
+  rp.list=shuffle(items).slice(0,15);rp.i=0;rp.done=false;rp.sum=0;rp.n=0;
+  document.getElementById("rpInfo").textContent=`本组 ${rp.list.length} 句`;rpShow()}
+function rpShow(){const box=document.getElementById("rpBox");rp.done=false;
+  document.getElementById("rpNum").textContent=rp.i<rp.list.length?`第 ${rp.i+1} / ${rp.list.length} 句`:"";
+  if(rp.i>=rp.list.length){const avg=rp.n?Math.round(rp.sum/rp.n):0;
+    box.innerHTML=`<div class="q"><div style="font-size:44px">${avg>=80?"🏆":avg>=60?"👍":"💪"}</div><div class="big">平均 ${avg} 分</div>
+     <div class="lab" style="margin-top:8px">${avg>=80?"发音很清楚！":avg>=60?"不错，再练练难的音":"多听几遍 🔊 再跟读"}</div></div>
+     <div class="row"><button class="btn" onclick="rpStart()">再来一组</button></div>`;return}
+  const x=rp.list[rp.i];
+  box.innerHTML=`<div class="q"><div class="lab">听一遍，然后大声跟读：</div><div class="zh" style="margin-top:8px">${esc(x.zh)}</div>
+     <div class="big" id="rpTarget">${esc(sr(x.sr))}</div>${showEn?`<div class="en" style="margin-top:4px">${esc(x.en)}</div>`:""}
+     ${x.note?`<div class="note">💡 ${esc(x.note)}</div>`:""}
+     <button class="spk" style="width:56px;height:56px;font-size:22px;margin-top:10px" onclick="say(${js(x.sr)},'sr')">🔊</button></div>
+   <div class="panel"><div class="heard" id="rpHeard">点 🔊 听，再点 🎤 跟读</div>${micBtn("rpListen()")}
+   <div class="row" id="rpRow"><button class="btn ghost" onclick="rpNext()">跳过 ›</button></div></div>`;
+  setTimeout(()=>say(x.sr,"sr"),250);
+}
+function rpListen(){listen(texts=>{const x=rp.list[rp.i],b=bestMatch(x.sr.split("/").map(s=>s.trim()),texts);
+  if(!rp.done){rp.done=true;rp.sum+=b.pct;rp.n++;rate(x.id,b.pct>=80)}
+  document.getElementById("rpTarget").innerHTML=colorize(b.ans,b.heard);
+  setHeard(`<div class="score ${pctClass(b.pct)}">${b.pct} 分 · ${pctWord(b.pct)}</div><div style="margin-top:6px">手机听到的：<b>${esc(sr(b.heard))}</b></div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">上面的句子里：绿色 = 读对，橙色 = 接近，红色 = 没听出来</div>`);
+  document.getElementById("rpRow").innerHTML=`<button class="btn ghost" onclick="say(${js(x.sr)},'sr')">🔊 再听</button><button class="btn" onclick="rpNext()">下一句 ›</button>`;
+},"rpHeard")}
+function rpNext(){cancelListen();rp.i++;rpShow()}
+
+/* 口语页：标签切换与设置 */
+function spTab(n){cancelListen();[1,2].forEach(i=>{document.getElementById("sp"+i).style.display=i===n?"":"none";document.getElementById("k"+i).classList.toggle("on",i===n)});
+  store.set("spTab",n);if(n===1&&!dlg.sc)renderScenes();if(n===2&&!rp.list.length)rpStart()}
+function speakSettings(){const L=recLang();
+  return `<div class="box" style="margin-top:14px"><b>🎤 语音识别设置</b><br>
+   识别状态：${canListen()?"✅ 可以使用":"❌ 这台设备不能语音识别（安卓手机请安装/更新「Google」App）"}<br>
+   识别语言：<select style="width:auto;display:inline-block;padding:5px 8px" onchange="store.set('recLang',this.value);toast('已切换')">
+     ${[["sr-RS","塞尔维亚语（推荐）"],["hr-HR","克罗地亚语（塞语不能用时选）"],["bs-BA","波斯尼亚语"]].map(([v,n])=>`<option value="${v}"${v===L?" selected":""}>${n}</option>`).join("")}</select>
+   <div style="font-size:12px;color:var(--muted);margin-top:6px">语音识别用的是手机自带的 Google 识别服务，一般需要联网。第一次使用会请求麦克风权限，请点「允许」。塞语和克罗地亚语几乎一样，塞语识别不了就换克罗地亚语。</div></div>`}
+
 /* 更多 */
 function moreTab(n){[1,2,3].forEach(i=>{document.getElementById("more"+i).style.display=i===n?"":"none";document.getElementById("m"+i).classList.toggle("on",i===n)});if(n===3)showVoiceInfo();if(n===1)updateStats()}
 const ABCN=["a","be","ce","če","će","de","dže","đe","e","ef","ge","ha","i","je","ka","el","elj","em","en","enj","o","pe","er","es","eš","te","u","ve","ze","že"];
@@ -1847,23 +2089,25 @@ function toggleEn(){showEn=!showEn;store.set("showEn",showEn);syncPills();rerend
 function syncPills(){document.getElementById("tLat").classList.toggle("on",script==="lat");document.getElementById("tCyr").classList.toggle("on",script==="cyr");document.getElementById("tEn").classList.toggle("on",showEn)}
 let curView="course";
 function rerender(){if(curView==="unit"&&curUnit)openUnit(curUnit,true);else{renderCourse();renderFactory();doSearch()}
-  if(fc.list.length)fcShow();if(qz.list.length&&!qz.done)qzShow()}
-function show(v,navAs){curView=v;
+  if(fc.list.length)fcShow();if(qz.list.length&&!qz.done)qzShow();
+  if(curView==="speak"){if(dlg.sc&&!REC.on)dlgRender();else if(!dlg.sc)renderScenes();if(rp.list.length&&!rp.done&&!REC.on)rpShow()}}
+function show(v,navAs){if(v!==curView)cancelListen();curView=v;
   document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
   const nv=navAs||v;document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
 }
 document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{const v=b.dataset.v;
   if(v==="course")renderCourse();if(v==="factory")renderFactory();
-  show(v);if(v==="cards"&&!fc.list.length)fcStart();if(v==="quiz"&&!qz.list.length)qzStart();if(v==="more")moreTab(1);window.scrollTo(0,0)});
+  show(v);if(v==="cards"&&!fc.list.length)fcStart();if(v==="quiz"&&!qz.list.length)qzStart();if(v==="more")moreTab(1);if(v==="speak")spTab(store.get("spTab",1));window.scrollTo(0,0)});
 
 /* 安卓返回键：能在应用内返回就返回，否则退出 */
 window.appBack=function(){
   if(curView==="unit"){curUnit=null;show(backTo);return true}
+  if(curView==="speak"&&dlg.sc&&document.getElementById("sp1").style.display!=="none"){cancelListen();dlg.sc=null;renderScenes();window.scrollTo(0,0);return true}
   if(curView!=="course"){renderCourse();show("course");window.scrollTo(0,0);return true}
   const q=document.getElementById("q");if(q.value){q.value="";doSearch();return true}
   return false;
 };
-fillSelect("fcCat");fillSelect("qzCat");syncPills();renderCourse();renderFactory();renderAbc();updateStats();
+fillSelect("fcCat");fillSelect("qzCat");fillSelect("spCat");syncPills();renderCourse();renderFactory();renderAbc();updateStats();
 </script>
 </body>
 </html>
