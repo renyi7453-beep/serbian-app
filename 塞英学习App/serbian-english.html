@@ -2078,7 +2078,7 @@ function speakSettings(){const L=recLang();
    <div style="font-size:12px;color:var(--muted);margin-top:6px">语音识别用的是手机自带的 Google 识别服务，一般需要联网。第一次使用会请求麦克风权限，请点「允许」。塞语和克罗地亚语几乎一样，塞语识别不了就换克罗地亚语。</div></div>`}
 
 /* ================= 自由对话（Gemini AI，需要联网） ================= */
-const AI_MODELS=["gemini-flash-latest","gemini-3.5-flash","gemini-2.5-flash","gemini-flash-lite-latest"];
+const AI_MODELS=["gemini-2.5-flash","gemini-flash-latest","gemini-3.5-flash","gemini-2.5-flash-lite","gemini-flash-lite-latest"];
 const AI_TOPICS=[["free","💬 随便聊"],["intro","👋 自我介绍、认识新朋友"],["work","🏭 工厂上班、同事和工作"],["food","🍽️ 点餐、吃饭、做饭"],["shop","🛒 超市购物、买东西"],["town","🚌 坐车、问路、沙巴茨城里"],["home","🏠 租房、住的地方"],["doctor","🏥 身体不舒服、看医生"],["weekend","☕ 周末、爱好、天气"]];
 const AI_TOPIC_EN={free:"anything the learner wants; suggest everyday topics",intro:"getting to know each other: name, country, family, how long in Serbia",
   work:"work at the car-parts factory: shifts, the production line, colleagues, breaks, the boss",food:"food: ordering in a cafe or restaurant, favourite dishes, cooking",
@@ -2119,7 +2119,7 @@ function aiErrMsg(r){
   if(r.code===400&&/api key|API_KEY/i.test(m))return "API 密钥不对：请到下面「AI 设置」重新粘贴密钥";
   if(r.code===403)return "密钥没有权限或被停用：请到 Google AI Studio 重新创建一个密钥";
   if(r.code===429)return "免费次数暂时用完了（太快了或今天用满了）：等一两分钟再试，或者明天再来";
-  if(r.code>=500)return "Google 服务器忙，等一下再试";
+  if(r.code>=500)return "Google 服务器忙（"+r.code+"），等一分钟再试"+(m?"："+m.slice(0,100):"");
   return "出错了（"+r.code+"）"+(m?"："+m.slice(0,120):"");
 }
 async function aiCall(){
@@ -2128,12 +2128,13 @@ async function aiCall(){
   const contents=ai.hist.slice(-24).map(h=>({role:h.role,parts:[{text:h.text}]}));
   const body=JSON.stringify({systemInstruction:{parts:[{text:aiSys()}]},contents,generationConfig:{responseMimeType:"application/json"}});
   let last=null;
-  for(const m of models){
+  for(const m of models)for(let tryN=0;tryN<2;tryN++){
     const r=await httpPost("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(m)+":generateContent",{"Content-Type":"application/json","x-goog-api-key":key},body);
     last=r;
     if(r.code===200){const o=aiParse(r.text);if(o){if(m!==saved)store.set("aiModelOk",m);return {o}}last={code:0,text:""};continue}
-    if(r.code===404||r.code===429||(r.code===400&&/model|not found|not supported/i.test(r.text)&&!/api key/i.test(r.text)))continue;
-    break;
+    if(r.code>=500&&tryN===0){await new Promise(z=>setTimeout(z,1500));continue}
+    if(r.code===404||r.code===429||r.code>=500||(r.code===400&&/model|not found|not supported/i.test(r.text)&&!/api key/i.test(r.text)))break;
+    return {err:aiErrMsg(r)};
   }
   return {err:last&&last.code===0?"AI 回复格式不对，请再说一次":aiErrMsg(last||{code:-1,text:""})};
 }
