@@ -2079,7 +2079,9 @@ function speakSettings(){const L=recLang();
    <div style="font-size:12px;color:var(--muted);margin-top:6px">语音识别用的是手机自带的 Google 识别服务，一般需要联网。第一次使用会请求麦克风权限，请点「允许」。塞语和克罗地亚语几乎一样，塞语识别不了就换克罗地亚语。</div></div>`}
 
 /* ================= 自由对话（Gemini AI，需要联网） ================= */
-const AI_MODELS=["gemini-2.5-flash","gemini-flash-latest","gemini-3.5-flash","gemini-2.5-flash-lite","gemini-flash-lite-latest"];
+/* 备用模型名单：只在自动检测失败时使用。平时 App 会用密钥向 Google 查询“现在能用哪些模型”，所以 Google 换新模型、停旧模型时不用再改代码 */
+const AI_MODELS=["gemini-flash-latest","gemini-flash-lite-latest","gemini-3.5-flash","gemini-3.5-flash-lite","gemini-3.1-flash-lite","gemini-2.5-flash","gemini-2.5-flash-lite"];
+const AI_BAD=/image|tts|live|audio|embed|vision|robotics|computer|omni|veo|imagen|lyria|aqa|learnlm|gemma|nano|banana|research|agent|translate|thinking|exp/i;
 const AI_TOPICS=[["free","💬 随便聊"],["intro","👋 自我介绍、认识新朋友"],["work","🏭 工厂上班、同事和工作"],["food","🍽️ 点餐、吃饭、做饭"],["shop","🛒 超市购物、买东西"],["town","🚌 坐车、问路、沙巴茨城里"],["home","🏠 租房、住的地方"],["doctor","🏥 身体不舒服、看医生"],["weekend","☕ 周末、爱好、天气"]];
 const AI_TOPIC_EN={free:"anything the learner wants; suggest everyday topics",intro:"getting to know each other: name, country, family, how long in Serbia",
   work:"work at the car-parts factory: shifts, the production line, colleagues, breaks, the boss",food:"food: ordering in a cafe or restaurant, favourite dishes, cooking",
@@ -2095,6 +2097,27 @@ function httpPost(url,headers,body){return new Promise(res=>{
   if(NATIVE&&typeof AndroidTTS.post==="function"){const id="h"+(++httpSeq);HTTP[id]=(c,t)=>res({code:c,text:t});
     try{AndroidTTS.post(id,url,JSON.stringify(headers),body)}catch(e){delete HTTP[id];res({code:-1,text:String(e)})}return}
   fetch(url,{method:"POST",headers,body}).then(r=>r.text().then(t=>res({code:r.status,text:t}))).catch(e=>res({code:-1,text:String(e)}))})}
+
+function httpGet(url,headers){return new Promise(res=>{
+  if(NATIVE&&typeof AndroidTTS.get==="function"){const id="h"+(++httpSeq);HTTP[id]=(c,t)=>res({code:c,text:t});
+    try{AndroidTTS.get(id,url,JSON.stringify(headers))}catch(e){delete HTTP[id];res({code:-1,text:String(e)})}return}
+  fetch(url,{headers}).then(r=>r.text().then(t=>res({code:r.status,text:t}))).catch(e=>res({code:-1,text:String(e)}))})}
+
+/* 模型名排序：版本号高的在前；同版本：正式版 > 预览版，普通 > lite；“-latest”别名排最前（Google 会自动指向最新的稳定版） */
+function aiRank(n){const lat=/latest$/.test(n)?1:0,v=parseFloat((n.match(/gemini-(\d+(?:\.\d+)?)/)||[0,0])[1])||0,
+  lite=/lite/.test(n)?1:0,pre=/preview|-\d{2}-\d{4}|-\d{3}$/.test(n)?1:0;return [-lite,lat,v,-pre]}
+function aiSort(a,b){const x=aiRank(a),y=aiRank(b);for(let i=0;i<4;i++)if(x[i]!==y[i])return y[i]-x[i];return a<b?-1:1}
+/* 用密钥向 Google 查询现在能用的对话模型 */
+async function aiDiscover(){const key=aiKey();if(!key)return null;
+  const r=await httpGet("https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000",{"x-goog-api-key":key});
+  if(r.code!==200)return null;let d;try{d=JSON.parse(r.text)}catch(e){return null}
+  const names=(d.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes("generateContent"))
+    .map(m=>String(m.name||"").replace(/^models\//,"")).filter(n=>/^gemini-/.test(n)&&/flash/.test(n)&&!AI_BAD.test(n));
+  if(!names.length)return null;
+  const list=[...new Set(names)].sort(aiSort);store.set("aiModels",{t:Date.now(),list});return list}
+async function aiModelList(force){const c=store.get("aiModels",null);
+  if(!force&&c&&c.list&&c.list.length&&Date.now()-c.t<3*864e5)return c.list;
+  return (await aiDiscover())||(c&&c.list&&c.list.length?c.list:AI_MODELS)}
 
 function aiSys(){const lv=store.get("aiLevel","a1"),tp=store.get("aiTopic","free");
   return `You are Marko, a friendly Serbian man from Šabac. You are chatting with a Chinese learner of Serbian who now lives in Šabac, Serbia and works at the Minth car-parts factory. Conversation topic: ${AI_TOPIC_EN[tp]||AI_TOPIC_EN.free}.
@@ -2127,20 +2150,28 @@ function aiErrMsg(r){
   if(r.code>=500)return "Google 服务器忙（"+r.code+"），等一分钟再试"+(m?"："+m.slice(0,100):"");
   return "出错了（"+r.code+"）"+(m?"："+m.slice(0,120):"");
 }
-async function aiCall(){
-  const key=aiKey(),saved=store.get("aiModelOk",""),custom=store.get("aiModel","").trim();
-  const models=[...new Set([custom,saved].filter(Boolean).concat(AI_MODELS))];
-  const contents=ai.hist.slice(-24).map(h=>({role:h.role,parts:[{text:h.text}]}));
-  const body=JSON.stringify({systemInstruction:{parts:[{text:aiSys()}]},contents,generationConfig:{responseMimeType:"application/json"}});
-  let last=null;
+async function aiTry(models,body){const key=aiKey(),saved=store.get("aiModelOk","");let last=null;
   for(const m of models)for(let tryN=0;tryN<2;tryN++){
     const r=await httpPost("https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(m)+":generateContent",{"Content-Type":"application/json","x-goog-api-key":key},body);
     last=r;
     if(r.code===200){const o=aiParse(r.text);if(o){if(m!==saved)store.set("aiModelOk",m);return {o}}last={code:0,text:""};continue}
     if(r.code>=500&&tryN===0){await new Promise(z=>setTimeout(z,1500));continue}
-    if(r.code===404||r.code===429||r.code>=500||(r.code===400&&/model|not found|not supported/i.test(r.text)&&!/api key/i.test(r.text)))break;
-    return {err:aiErrMsg(r)};
+    if(r.code===404||r.code===429||r.code>=500||(r.code===400&&/model|not found|not supported|deprecated/i.test(r.text)&&!/api key/i.test(r.text)))break;
+    return {err:aiErrMsg(r),stop:true};
   }
+  return {last}}
+async function aiCall(){
+  const saved=store.get("aiModelOk",""),custom=store.get("aiModel","").trim();
+  const contents=ai.hist.slice(-24).map(h=>({role:h.role,parts:[{text:h.text}]}));
+  const body=JSON.stringify({systemInstruction:{parts:[{text:aiSys()}]},contents,generationConfig:{responseMimeType:"application/json"}});
+  const pick=list=>[...new Set([custom,saved].filter(Boolean).concat(list))].slice(0,8);
+  let tried=pick(await aiModelList(false));
+  let r=await aiTry(tried,body);if(r.o||r.stop)return r;
+  /* 全部不行：可能 Google 刚换了模型，重新查一次最新名单，只试还没试过的 */
+  const fresh=(await aiDiscover())||AI_MODELS,more=pick(fresh).filter(m=>!tried.includes(m));
+  if(more.length){store.set("aiModelOk","");const r2=await aiTry(more,body);if(r2.o||r2.stop)return r2;r=r2}
+  const last=r.last;
+  if(last&&last.code===404)return {err:"找不到能用的 AI 模型：请到下面「AI 设置」点「🔍 检测可用模型」"};
   return {err:last&&last.code===0?"AI 回复格式不对，请再说一次":aiErrMsg(last||{code:-1,text:""})};
 }
 async function aiSend(text){
@@ -2195,7 +2226,9 @@ function aiTyped(){const i=document.getElementById("aiText");if(!i)return;const 
 function aiSetup(first){const k=aiKey();
   if(!first)return `<details class="box" style="margin-top:14px"><summary><b>⚙️ AI 设置</b>（密钥已保存：…${esc(k.slice(-4))}）</summary>
     <div style="margin-top:8px">${aiKeyForm()}<div style="font-size:12px;color:var(--muted);margin-top:8px">模型（一般不用改，留空自动选）：</div>
-    <input class="search" style="margin-top:4px" placeholder="例如 gemini-flash-latest" value="${esc(store.get("aiModel",""))}" onchange="store.set('aiModel',this.value.trim());store.set('aiModelOk','')">
+    <input class="search" id="aiModelIn" style="margin-top:4px" placeholder="例如 gemini-flash-latest" value="${esc(store.get("aiModel",""))}" onchange="store.set('aiModel',this.value.trim());store.set('aiModelOk','')">
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">正在用：${esc(store.get("aiModelOk","")||"（还没用过）")}</div>
+    <div class="row"><button class="btn ghost" onclick="aiCheckModels()">🔍 检测可用模型</button></div><div id="aiModelBox"></div>
     <div class="row"><button class="btn ghost" onclick="aiDelKey()">删除密钥</button></div></div></details>`+speakSettings();
   return `<div class="tip"><b>🤖 自由对话需要一个免费的 Google AI 密钥（只要设置一次）</b><br>
     1. 用手机浏览器打开 <b>aistudio.google.com/apikey</b>，用你的 Google 账号登录，同意条款。<br>
@@ -2205,10 +2238,17 @@ function aiSetup(first){const k=aiKey();
     <div class="box">${aiKeyForm()}</div>`+speakSettings()}
 function aiKeyForm(){return `<input class="search" id="aiKeyIn" type="password" autocomplete="off" placeholder="粘贴 API 密钥（一般以 AIza 开头）">
   <div class="row"><button class="btn" onclick="aiSaveKey()">保存</button></div>`}
+async function aiCheckModels(){const b=document.getElementById("aiModelBox");if(!b)return;b.innerHTML='<div class="z">正在向 Google 查询… ⏳</div>';
+  const list=await aiDiscover();
+  if(!list){b.innerHTML='<div class="z">查询失败：请检查网络和密钥。App 会继续用备用名单自动尝试。</div>';return}
+  const cur=store.get("aiModel","");
+  b.innerHTML=`<div style="font-size:12px;color:var(--muted);margin:6px 0 4px">找到 ${list.length} 个对话模型（越靠前越新）。一般选「自动」就行；某个模型一直报错，可以换一个试试：</div>
+    <select style="width:100%" onchange="aiSetModel(this.value)"><option value="">自动（推荐）</option>${list.map(m=>`<option value="${esc(m)}"${m===cur?" selected":""}>${esc(m)}</option>`).join("")}</select>`}
+function aiSetModel(v){store.set("aiModel",v);store.set("aiModelOk","");const i=document.getElementById("aiModelIn");if(i)i.value=v;toast(v?"已改用 "+v:"已改为自动选择")}
 function aiDelKey(){if(!aiDelKey.a){aiDelKey.a=1;toast("再点一次确认删除密钥");setTimeout(()=>aiDelKey.a=0,3000);return}
-  aiDelKey.a=0;store.set("aiKey","");store.set("aiModelOk","");ai.hist=[];aiRender();toast("已删除")}
+  aiDelKey.a=0;store.set("aiKey","");store.set("aiModelOk","");store.set("aiModels",null);ai.hist=[];aiRender();toast("已删除")}
 function aiSaveKey(){const v=(document.getElementById("aiKeyIn").value||"").trim();if(v.length<20){toast("密钥好像不完整，请重新复制粘贴");return}
-  store.set("aiKey",v);store.set("aiModelOk","");toast("已保存");ai.hist=[];aiRender()}
+  store.set("aiKey",v);store.set("aiModelOk","");store.set("aiModels",null);toast("已保存");ai.hist=[];aiRender()}
 
 /* 更多 */
 function moreTab(n){[1,2,3].forEach(i=>{document.getElementById("more"+i).style.display=i===n?"":"none";document.getElementById("m"+i).classList.toggle("on",i===n)});if(n===3)showVoiceInfo();if(n===1)updateStats()}
