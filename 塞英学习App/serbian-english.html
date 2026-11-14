@@ -11,7 +11,7 @@
   --amber:#ff9600;--yellow:#ffc800;--purple:#ce82ff;--pink:#ff86d0;--soft:#ddf4ff;--fac:#ff9600;--r:18px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:"Nunito","Varela Round","SF Pro Rounded","PingFang SC","HarmonyOS Sans SC","MiSans","Microsoft YaHei","Noto Sans CJK SC",Roboto,sans-serif}
+  font-family:"Nunito","Varela Round","SF Pro Rounded",system-ui,-apple-system,Roboto,"Segoe UI","PingFang SC","HarmonyOS Sans SC","MiSans","Microsoft YaHei","Noto Sans CJK SC",sans-serif}
 body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
 button,input,select{font-family:inherit}
 /* 顶部 */
@@ -303,6 +303,7 @@ const LEVELS = [
  {id:"L1", t:"第一级 · 入门", sub:"打基础：问候、介绍、数字、时间、基本动词"},
  {id:"L2", t:"第二级 · 生活", sub:"能自己吃饭、购物、租房、坐车、看病"},
  {id:"L3", t:"第三级 · 进阶", sub:"办事、约人、表达想法、过去和将来"},
+ {id:"L4", t:"第四级 · 句式专项", sub:"14 组万能句式：想要、能不能、有没有、在哪里、过去将来、因为如果……套进去就能说"},
  {id:"F",  t:"工厂实用", sub:"上班、生产线、质量、安全、请假工资"},
 ];
 const UNITS = [
@@ -1309,6 +1310,217 @@ T恤|majica|T-shirt
 在……之间|između|between`},
 
 /* ================= 工厂 ================= */
+{id:"jp-want",lv:"L4",ic:"🙋",t:"想要 · 需要",tip:"「Želim」 + 名词 / 「Želim da」 + 动词：我想要／我想做。「Hoću」 更口语、更直接。「Treba mi」 + 单数名词、「Trebaju mi」 + 复数名词：我需要。最礼貌的说法：男 「Hteo bih」、女 「Htela bih」（我想要…）。",d:`
+我想喝咖啡。|Želim da pijem kafu.|I want to drink coffee.|句式：Želim da + 动词
+我想要一杯水。|Želim čašu vode.|I want a glass of water.|句式：Želim + 名词
+我要这个。|Hoću ovo.|I want this.|Hoću 比 Želim 更口语、更直接
+我想回家。|Hoću kući.|I want to go home.|口语里常省掉动词 ići（去）
+我需要帮助。|Treba mi pomoć.|I need help.|句式：Treba mi + 单数名词
+我需要新手套。|Trebaju mi nove rukavice.|I need new gloves.|复数名词用 Trebaju mi
+我不需要袋子。|Ne treba mi kesa.|I don't need a bag.|否定：Ne treba mi
+你需要什么？|Šta ti treba?|What do you need?|对您说：Šta vam treba?
+我可以要一份菜单吗？|Mogu li dobiti jelovnik?|Can I get the menu?|句式：Mogu li dobiti + 名词？点餐最常用
+我想要一个汉堡。（男）|Hteo bih jedan hamburger.|I would like a hamburger.|女说 Htela bih；比 Želim 更礼貌
+我想预约。（女）|Htela bih da zakažem termin.|I would like to make an appointment.|男说 Hteo bih da zakažem
+我想学塞尔维亚语。|Želim da učim srpski.|I want to learn Serbian.|句式：Želim da + 动词
+我不想加班。|Ne želim da radim prekovremeno.|I don't want to work overtime.|否定：Ne želim da + 动词
+你想吃什么？|Šta želiš da jedeš?|What do you want to eat?|对您说：Šta želite da jedete?
+`},
+{id:"jp-can",lv:"L4",ic:"💪",t:"能 · 会 · 可以",tip:"「Mogu da」 + 动词：我能／我可以。问别人：「Možeš li da…?」（你）／「Možete li da…?」（您）。学会的本领用 「Znam da」 + 动词（我会开车、我会游泳）。会说某种语言直接用 「Govorim」。问规定：「Da li se sme…?」（这里可以…吗？）",d:`
+我会说一点塞尔维亚语。|Govorim malo srpski.|I speak a little Serbian.|“会说某种语言”直接用 govorim
+我能做这个。|Mogu ovo da uradim.|I can do this.|句式：Mogu da + 动词
+我今天不能来。|Ne mogu danas da dođem.|I can't come today.|否定：Ne mogu da + 动词
+我可以进来吗？|Mogu li da uđem?|May I come in?|句式：Mogu li da + 动词？
+您能帮我吗？|Možete li da mi pomognete?|Can you help me?|对朋友：Možeš li da mi pomogneš?
+您能说慢一点吗？|Možete li sporije?|Can you speak more slowly?|听不懂时最有用
+您能再说一遍吗？|Možete li da ponovite?|Can you repeat that?|句式：Možete li da + 动词？
+我会开车。|Znam da vozim.|I can drive.|学会的本领：Znam da + 动词
+我不会游泳。|Ne znam da plivam.|I can't swim.|否定：Ne znam da + 动词
+这里可以抽烟吗？|Da li se ovde sme pušiti?|Is smoking allowed here?|问规定：Da li se sme + 动词原形？
+这里禁止拍照。|Ovde je zabranjeno fotografisanje.|Photography is forbidden here.|zabranjeno = 禁止
+我可以用一下厕所吗？|Mogu li da koristim toalet?|May I use the toilet?|
+你会用这台机器吗？|Znaš li da koristiš ovu mašinu?|Do you know how to use this machine?|Znaš li da + 动词？= 你会…吗？
+`},
+{id:"jp-have",lv:"L4",ic:"🎒",t:"有 · 没有",tip:"「Imam」 + 名词：我有。「Nemam」 + 名词（第二格）：我没有。问“有没有某个地方/东西”用 「Ima li…?」；回答“没有了”用 「Nema (više)…」。「Nema problema」 = 没问题。",d:`
+我有一个哥哥。|Imam starijeg brata.|I have an older brother.|句式：Imam + 名词
+我有一个问题。|Imam jedno pitanje.|I have a question.|
+我没有时间。|Nemam vremena.|I don't have time.|否定：Nemam + 名词（第二格）
+我没钱了。|Nemam više para.|I have no more money.|više 在否定句里 = 已经不、再也不
+您有零钱吗？|Imate li sitno?|Do you have change?|句式：Imate li + 名词？
+你有孩子吗？|Imaš li decu?|Do you have children?|
+附近有药店吗？|Ima li apoteka u blizini?|Is there a pharmacy nearby?|问“有没有”：Ima li + 名词？
+这里有无线网吗？|Ima li ovde Wi-Fi?|Is there Wi-Fi here?|
+面包没有了。|Nema više hleba.|There's no more bread.|“…没有了”：Nema više + 第二格
+没问题。|Nema problema.|No problem.|
+今天一个人都没有。|Danas nema nikoga.|There's nobody here today.|
+商店里人很多。|U prodavnici ima mnogo ljudi.|There are many people in the store.|“某处有很多…”：U + 地方 + ima mnogo…
+仓库里还有零件吗？|Ima li još delova u magacinu?|Are there still parts in the warehouse?|još = 还
+`},
+{id:"jp-where",lv:"L4",ic:"📍",t:"在哪里 · 方位",tip:"「Gde je」 + 单数？「Gde su」 + 复数？：…在哪里？回答：「Ovde je」（在这里）、「Tamo je」（在那边）、「Levo / Desno」（左／右）。方位词后面接第二格：「pored」（旁边）、「preko puta」（对面）、「ispod」（下面）、「iznad」（上面）。问路：「Kako da stignem do…?」",d:`
+厕所在哪里？|Gde je toalet?|Where is the toilet?|句式：Gde je + 单数名词？
+我的包在哪里？|Gde je moja torba?|Where is my bag?|
+钥匙在哪里？|Gde su ključevi?|Where are the keys?|复数用 Gde su
+在这里。|Ovde je.|It's here.|
+在那边。|Tamo je.|It's over there.|
+在左边。|Levo je.|It's on the left.|右边：Desno je.
+超市在药店旁边。|Prodavnica je pored apoteke.|The store is next to the pharmacy.|句式：A je pored + B（第二格）
+车站在银行对面。|Stanica je preko puta banke.|The station is across from the bank.|preko puta = 在…对面
+箱子在桌子下面。|Kutija je ispod stola.|The box is under the table.|ispod 下面／iznad 上面
+我在工厂。|Ja sam u fabrici.|I'm at the factory.|u + 地方 = 在…里
+我在家。|Kod kuće sam.|I'm at home.|“在家”固定说 kod kuće
+你在哪儿？|Gde si?|Where are you?|
+去火车站怎么走？|Kako da stignem do železničke stanice?|How do I get to the train station?|问路：Kako da stignem do + 地方？
+离这里远吗？|Da li je daleko odavde?|Is it far from here?|近：blizu
+`},
+{id:"jp-like",lv:"L4",ic:"❤️",t:"喜欢 · 想念 · 感兴趣",tip:"「Volim」 + 名词 / 「Volim da」 + 动词：我喜欢。「Sviđa mi se」 + 东西：我喜欢（东西当主语，复数用 「Sviđaju mi se」）。「Više volim A nego B」：比起 B 更喜欢 A。「Zanima me」：我感兴趣。「Nedostaje mi」：我想念。",d:`
+我喜欢塞尔维亚。|Volim Srbiju.|I love Serbia.|句式：Volim + 名词
+我喜欢做饭。|Volim da kuvam.|I like to cook.|句式：Volim da + 动词
+我不喜欢下雨。|Ne volim kišu.|I don't like rain.|
+我很喜欢这道菜。|Mnogo mi se sviđa ovo jelo.|I really like this dish.|句式：Sviđa mi se + 东西
+你喜欢沙巴茨吗？|Sviđa li ti se Šabac?|Do you like Šabac?|
+我喜欢这双鞋。|Sviđaju mi se ove cipele.|I like these shoes.|复数用 Sviđaju mi se
+比起咖啡我更喜欢茶。|Više volim čaj nego kafu.|I prefer tea to coffee.|句式：Više volim A nego B
+我最喜欢的食物是烤肉。|Moja omiljena hrana je roštilj.|My favourite food is grilled meat.|omiljen / omiljena / omiljeno 随名词性别变
+你喜欢做什么？|Šta voliš da radiš?|What do you like to do?|
+我对足球不感兴趣。|Ne zanima me fudbal.|I'm not interested in football.|句式：(Ne) zanima me + 东西
+我讨厌早起。|Mrzim da ustajem rano.|I hate getting up early.|mrzim = 讨厌
+我很想家人。|Mnogo mi nedostaje porodica.|I miss my family a lot.|句式：Nedostaje mi + 想念的人或东西
+`},
+{id:"jp-must",lv:"L4",ic:"⚠️",t:"必须 · 应该 · 不准",tip:"「Moram da」 + 动词：必须。注意 「Ne moram」 = 不必（可以不做），「Ne smem / Ne smeš」 = 不准、不可以。「Treba da」 + 动词：应该；「Trebalo bi da」 更委婉。叫别人别做：「Ne」 + 命令式（Ne brini! 别担心）。",d:`
+我得走了。|Moram da idem.|I have to go.|句式：Moram da + 动词
+我明天得早起。|Sutra moram rano da ustanem.|I have to get up early tomorrow.|
+你不用来。|Ne moraš da dođeš.|You don't have to come.|Ne moraš = 不必，不是“不准”
+这里不准抽烟。|Ovde ne smeš da pušiš.|You mustn't smoke here.|Ne smeš = 不准、不可以
+必须戴手套。|Moraš da nosiš rukavice.|You must wear gloves.|
+你应该休息一下。|Treba da se odmoriš.|You should rest.|句式：Treba da + 动词
+我们应该早点出发。|Trebalo bi da krenemo ranije.|We should set off earlier.|Trebalo bi da 语气更委婉
+你应该去看医生。|Trebalo bi da odeš kod lekara.|You should see a doctor.|
+这个今天必须做完吗？|Da li ovo mora danas da se završi?|Does this have to be finished today?|
+我必须交医生证明吗？|Da li moram da donesem lekarsko uverenje?|Do I have to bring a doctor's note?|句式：Da li moram da + 动词？
+别担心。|Ne brini.|Don't worry.|否定命令：Ne + 命令式
+别碰！|Ne diraj!|Don't touch!|对多人或您：Ne dirajte!
+`},
+{id:"jp-ask",lv:"L4",ic:"🤔",t:"怎么提问",tip:"疑问词放句首：「Šta」 什么、「Ko」 谁、「Gde」 哪里、「Kada」 什么时候、「Zašto」 为什么、「Kako」 怎么、「Koliko」 多少、「Koji」 哪个、「Čiji」 谁的、「Odakle」 从哪里。是非问句：「Da li」 + 陈述句？",d:`
+这是什么？|Šta je ovo?|What is this?|句式：Šta je + ovo / to？
+这个用塞语怎么说？|Kako se ovo kaže na srpskom?|How do you say this in Serbian?|学语言必会
+这个多少钱？|Koliko ovo košta?|How much does this cost?|
+一共多少钱？|Koliko je ukupno?|How much is it in total?|
+几点开门？|Kada se otvara?|When does it open?|关门：Kada se zatvara?
+你为什么迟到？|Zašto si zakasnio?|Why were you late?|问女性：Zašto si zakasnila?
+要多长时间？|Koliko traje?|How long does it take?|
+你住在哪里？|Gde živiš?|Where do you live?|
+谁是班长？|Ko je šef smene?|Who is the shift leader?|
+这是谁的？|Čije je ovo?|Whose is this?|
+你是哪里人？|Odakle si?|Where are you from?|
+哪个更好？|Koji je bolji?|Which one is better?|
+你好吗？|Kako si?|How are you?|对您：Kako ste?
+你是中国人吗？|Da li si iz Kine?|Are you from China?|是非问句：Da li + 陈述句？
+`},
+{id:"jp-time",lv:"L4",ic:"⏰",t:"时间句式",tip:"「U koliko sati…?」 几点…？回答用 「u」 + 钟点。「od A do B」 从 A 到 B。「pre」 + 第二格 = 在…之前，「posle」 + 第二格 = 在…之后。「pre tri dana」 三天前，「za dva dana」 两天后。“已经…多久了”：现在时 + 「već」 + 时间。",d:`
+你几点上班？|U koliko sati počinješ posao?|What time do you start work?|句式：U koliko sati + 动词？
+我六点开始上班。|Počinjem posao u šest.|I start work at six.|u + 钟点
+我从早上六点工作到下午两点。|Radim od šest ujutru do dva popodne.|I work from 6 a.m. to 2 p.m.|句式：od A do B
+午饭前给我打电话。|Pozovi me pre ručka.|Call me before lunch.|pre + 第二格 = 在…之前
+下班后去喝咖啡吧。|Hajde na kafu posle posla.|Let's go for coffee after work.|posle + 第二格 = 在…之后
+我每天都学塞语。|Svaki dan učim srpski.|I study Serbian every day.|svaki dan = 每天
+我周末不上班。|Vikendom ne radim.|I don't work at weekends.|vikendom = 每到周末
+我在塞尔维亚已经住了一年了。|Živim u Srbiji već godinu dana.|I've been living in Serbia for a year.|句式：现在时 + već + 时间
+我两天后回来。|Vraćam se za dva dana.|I'll be back in two days.|za + 时间 = …之后
+我三天前到的。（男）|Stigao sam pre tri dana.|I arrived three days ago.|pre + 时间 = …以前；女说 Stigla sam
+星期一见。|Vidimo se u ponedeljak.|See you on Monday.|u + 星期几
+有时候我很累。（男）|Ponekad sam jako umoran.|Sometimes I'm very tired.|女说 umorna
+我很少喝酒。|Retko pijem alkohol.|I rarely drink alcohol.|retko 很少／često 经常
+`},
+{id:"jp-past",lv:"L4",ic:"⏪",t:"过去时句式",tip:"过去时 = 「sam / si / je / smo / ste / su」 + 过去分词。分词随说话人性别变：男 「-o」（radio, bio），女 「-la」（radila, bila），我们 「-li」。否定：「nisam」 + 分词。句子开头没有别的词时，分词放前面：「Radio sam.」",d:`
+昨天我在家。（男）|Juče sam bio kod kuće.|Yesterday I was at home.|句式：sam + 分词；女说 bila
+昨天我上班了。（女）|Juče sam radila.|Yesterday I worked.|男说 radio
+我吃过了。（男）|Jeo sam.|I've eaten.|女说 Jela sam.
+我已经做完了。（女）|Već sam završila.|I've already finished.|男说 završio
+你去过贝尔格莱德吗？|Da li si bio u Beogradu?|Have you been to Belgrade?|问女性：Da li si bila
+我没听懂。（男）|Nisam razumeo.|I didn't understand.|否定：nisam + 分词；女说 razumela
+我忘了。（女）|Zaboravila sam.|I forgot.|男说 Zaboravio sam.
+他已经走了。|Već je otišao.|He has already left.|“她”：Već je otišla.
+我们昨天看了电影。|Juče smo gledali film.|We watched a film yesterday.|我们：smo + -li
+你昨天干什么了？|Šta si radio juče?|What did you do yesterday?|问女性：Šta si radila juče?
+机器坏了。|Mašina se pokvarila.|The machine broke down.|
+我在中国当过老师。（男）|U Kini sam radio kao nastavnik.|I worked as a teacher in China.|女说 radila kao nastavnica
+我昨晚没睡好。（女）|Sinoć nisam dobro spavala.|I didn't sleep well last night.|男说 spavao
+`},
+{id:"jp-future",lv:"L4",ic:"⏩",t:"将来时句式",tip:"将来时 = 「ću / ćeš / će / ćemo / ćete / će」 + 动词原形（Sutra ću ići）。句首没有别的词时合成一个词：raditi → 「radiću」，biti → 「biću」。否定：「neću」 + 原形。疑问：「Hoćeš li」 + 原形？很快就要做的事也常直接用现在时。",d:`
+明天我去商店。|Sutra ću ići u prodavnicu.|Tomorrow I'll go to the store.|句式：ću + 动词原形
+明天我上班。|Radiću sutra.|I'll work tomorrow.|raditi → radiću（句首合成一个词）
+我给你打电话。|Zvaću te.|I'll call you.|zvati → zvaću
+周末你来吗？|Hoćeš li doći za vikend?|Will you come at the weekend?|疑问：Hoćeš li + 原形？
+我不去。|Neću ići.|I won't go.|否定：neću + 原形
+我们会准时到。|Stići ćemo na vreme.|We'll arrive on time.|
+下周我要搬家。|Sledeće nedelje ću se seliti.|I'm moving next week.|
+要下雨了。|Padaće kiša.|It's going to rain.|
+五点以后我有空。（男）|Biću slobodan posle pet.|I'll be free after five.|biti → biću；女说 slobodna
+你什么时候回中国？|Kada ćeš se vratiti u Kinu?|When will you go back to China?|
+明年我要学开车。|Sledeće godine ću učiti da vozim.|Next year I'll learn to drive.|
+我马上来！|Odmah dolazim!|I'm coming right away!|“马上”常直接用现在时
+`},
+{id:"jp-link",lv:"L4",ic:"🧩",t:"因为 · 如果 · 但是",tip:"「jer / zato što」 因为，「zato」 所以，「ako」 如果，「kad」 当…的时候，「ali」 但是，「iako」 虽然，「ili」 或者／还是，「da bih」 + 分词 = 为了。用这些词把两个短句连起来，说话马上更像本地人。",d:`
+我迟到了，因为公交车没来。（男）|Zakasnio sam jer autobus nije došao.|I was late because the bus didn't come.|jer = 因为（最常用）；女说 Zakasnila
+我不去，因为我很累。（男）|Ne idem zato što sam umoran.|I'm not going because I'm tired.|zato što 也是“因为”；女说 umorna
+所以我今天来不了。|Zato danas ne mogu da dođem.|That's why I can't come today.|zato = 所以
+如果下雨，我们就待在家里。|Ako pada kiša, ostajemo kod kuće.|If it rains, we stay at home.|句式：Ako A, B
+你有时间的话，给我打电话。|Ako imaš vremena, pozovi me.|If you have time, call me.|
+我到了就给你打电话。|Kad stignem, zvaću te.|When I arrive, I'll call you.|kad = 当…的时候
+我想去，但是没时间。|Hoću da idem, ali nemam vremena.|I want to go, but I don't have time.|ali = 但是
+虽然很累，但我很开心。（女）|Iako sam umorna, srećna sam.|Although I'm tired, I'm happy.|iako = 虽然；男说 umoran, srećan
+我学塞语是为了找更好的工作。（男）|Učim srpski da bih našao bolji posao.|I'm learning Serbian to find a better job.|da bih + 分词 = 为了；女说 našla
+你要咖啡还是茶？|Hoćeš kafu ili čaj?|Do you want coffee or tea?|ili = 还是、或者
+我和同事一起吃午饭。|Ručam sa kolegama.|I have lunch with colleagues.|sa + 人 = 和…一起
+不但便宜，而且好吃。|Nije samo jeftino, nego i ukusno.|It's not only cheap but also tasty.|句式：nije samo A, nego i B
+`},
+{id:"jp-compare",lv:"L4",ic:"⚖️",t:"比较句式",tip:"「A je」 + 比较级 + 「od B」（或 「nego B」）：A 比 B 更…。比较级多数加 -iji / -ji：jeftin → jeftiniji。不规则：dobar → 「bolji」，loš → 「gori」，velik → 「veći」，mali → 「manji」。最高级：「naj」 + 比较级。「kao」 = 像…一样，「sve」 + 比较级 = 越来越…",d:`
+这个比那个大。|Ovaj je veći od onog.|This one is bigger than that one.|句式：A je + 比较级 + od B
+今天比昨天冷。|Danas je hladnije nego juče.|Today is colder than yesterday.|nego 也表示“比”
+我的塞语比以前好了。|Moj srpski je bolji nego pre.|My Serbian is better than before.|dobar → bolji
+这是最好的餐厅。|Ovo je najbolji restoran.|This is the best restaurant.|最高级：naj + 比较级
+这个最便宜。|Ovo je najjeftinije.|This is the cheapest.|
+夜班比白班累。|Noćna smena je teža od dnevne.|The night shift is harder than the day shift.|težak → teži / teža
+他和我一样高。|Visok je kao ja.|He is as tall as me.|kao = 像…一样
+这两个一样。|Ova dva su ista.|These two are the same.|
+这个不一样。|Ovo je drugačije.|This is different.|
+能便宜一点吗？|Može li malo jeftinije?|Can it be a bit cheaper?|讲价常用
+请大声一点。|Malo glasnije, molim vas.|A bit louder, please.|
+天越来越冷了。|Sve je hladnije.|It's getting colder and colder.|sve + 比较级 = 越来越…
+我更喜欢夏天。|Više volim leto.|I prefer summer.|više = 更
+`},
+{id:"jp-polite",lv:"L4",ic:"🌷",t:"礼貌请求",tip:"开口先说 「Izvinite」（打扰一下）。最礼貌的请求：「Da li biste mogli da…?」（您能否…？）。「Izvolite」 = 请（递东西、让座、请进都用）。「Hvala na」 + 名词 = 谢谢您的…。「Izvinite što」 + 句子 = 对不起，我…",d:`
+打扰一下，请问几点了？|Izvinite, koliko je sati?|Excuse me, what time is it?|开口前先说 Izvinite
+您能帮我一下吗？|Da li biste mogli da mi pomognete?|Could you help me?|Da li biste mogli da… = 您能否…（很礼貌）
+您能写下来吗？|Da li biste mogli to da napišete?|Could you write it down?|
+请稍等。|Sačekajte malo, molim vas.|Please wait a moment.|
+请坐。|Izvolite, sedite.|Please, have a seat.|izvolite = 请
+给您。|Izvolite.|Here you are.|递东西时说
+谢谢您的帮助。|Hvala vam na pomoći.|Thank you for your help.|句式：Hvala na + 名词
+不客气。|Nema na čemu.|You're welcome.|
+对不起，我来晚了。|Izvinite što kasnim.|Sorry I'm late.|句式：Izvinite što + 句子
+我可以开窗吗？|Da li smem da otvorim prozor?|May I open the window?|smem = 可以（被允许）
+谢谢，您真好。|Hvala, ljubazni ste.|Thank you, you're very kind.|
+很高兴认识您。|Drago mi je što smo se upoznali.|Nice to meet you.|
+周末愉快！|Lep vikend!|Have a nice weekend!|
+慢用！|Prijatno!|Enjoy your meal!|也可以用来告别
+`},
+{id:"jp-opinion",lv:"L4",ic:"💡",t:"表达看法",tip:"「Mislim da」 + 句子：我觉得…。「Po mom mišljenju」：在我看来。「Slažem se / Ne slažem se」：同意／不同意。「Nadam se da」：希望…。「Bojim se da」：担心…。「Zavisi od」：取决于…",d:`
+我觉得这样很好。|Mislim da je ovo dobro.|I think this is good.|句式：Mislim da + 句子
+我不觉得他是对的。|Ne mislim da je u pravu.|I don't think he's right.|
+在我看来，这太贵了。|Po mom mišljenju, ovo je preskupo.|In my opinion, this is too expensive.|pre- + 形容词 = 太…
+我同意。|Slažem se.|I agree.|
+我不同意。|Ne slažem se.|I disagree.|
+你说得对。|U pravu si.|You're right.|对您：U pravu ste.
+我不确定。（男）|Nisam siguran.|I'm not sure.|女说 sigurna
+我希望明天天气好。|Nadam se da će sutra biti lepo vreme.|I hope the weather will be nice tomorrow.|句式：Nadam se da + 句子
+我觉得我们应该早点走。|Mislim da treba da krenemo ranije.|I think we should leave earlier.|
+你觉得呢？|Šta misliš?|What do you think?|对您：Šta mislite?
+好主意！|Dobra ideja!|Good idea!|
+这要看价格。|Zavisi od cene.|It depends on the price.|句式：Zavisi od + 名词
+我怕会迟到。|Bojim se da ću zakasniti.|I'm afraid I'll be late.|句式：Bojim se da + 句子
+当然！|Naravno!|Of course!|
+`},
 {id:"f-shift",lv:"F",ic:"🕕",t:"上下班与考勤",tip:"三班倒：prva smena 早班，druga smena 中班，treća/noćna smena 夜班。打卡口语说 otkucati karticu。",d:`
 班次|smena|shift
 早班（第一班）|prva smena|first shift
